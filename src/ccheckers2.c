@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "render.h"
+#include "utils.h"
 
 static Uint64 frame_start = 0;
 static Uint64 frame_end = 0;
@@ -20,7 +21,7 @@ int main(int argc, char* args[])
 
     double interval = 1.0 / fps * 1000.0;
 
-    printf("interval %f", interval);
+    // printf("interval %f\n", interval);
 
     SDL_Event e;
 
@@ -61,7 +62,13 @@ int main(int argc, char* args[])
 
         if (frame_start - frame_end > interval)
         {
-            SDL_Delay(frame_start + interval - frame_end);
+            Uint32 delay = frame_start + interval - frame_end;
+
+            delay = clamp_uint32(delay, 0, interval);
+
+            // printf("delay %d\n", delay);
+
+            SDL_Delay(delay);
         }
     }
 
