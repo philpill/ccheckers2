@@ -4,74 +4,47 @@
 #include <stdbool.h>
 #include "render.h"
 #include "utils.h"
+#include "game.h"
+#include "input.h"
 
-static Uint64 frame_start = 0;
-static Uint64 frame_end = 0;
-static int fps = 30;
-static bool is_quit = false;
+static const int fps = 30;
+static double interval = 0.0;
 
-void loop()
+void loop(Game *state)
 {
-    render_exec();
+    printf(".");
+
+    Uint64 start = SDL_GetTicks64();
+
+    input_exec(state);
+    render_exec(state);
+
+    Uint64 elapsed = SDL_GetTicks64() - start;
+
+    Uint32 delay = elapsed > interval
+        ? clamp_uint32(interval - elapsed, 0, interval)
+        : 0;
+
+    SDL_Delay(delay);
 }
 
 int main(int argc, char* args[])
 {
-    printf("main()\n");
+    printf("ccheckers2\n");
 
-    double interval = 1.0 / fps * 1000.0;
+    interval = 1.0 / fps * 1000.0;
 
-    // printf("interval %f\n", interval);
-
-    SDL_Event e;
+    Game *state = game_get_state();
 
     render_init();
+    game_init();
 
-    while (!is_quit)
+    while (!state->is_quit)
     {
-        frame_start = SDL_GetTicks64();
-
-        // printf("start %d\n", frame_start);
-
-        //Handle events on queue
-        while (SDL_PollEvent(&e) != 0)
-        {
-
-            // printf("%d\n", e.type);
-            // printf("%d\n", e.key.keysym.sym);
-
-            switch (e.key.keysym.sym)
-            {
-            case SDLK_ESCAPE:
-                is_quit = true;
-                break;
-            }
-
-            switch (e.type)
-            {
-            case SDL_QUIT:
-                is_quit = true;
-                break;
-            }
-        }
-
-        loop();
-
-        frame_end = SDL_GetTicks64();
-        // printf("end %d\n", frame_end);
-
-        if (frame_start - frame_end > interval)
-        {
-            Uint32 delay = frame_start + interval - frame_end;
-
-            delay = clamp_uint32(delay, 0, interval);
-
-            // printf("delay %d\n", delay);
-
-            SDL_Delay(delay);
-        }
+        loop(state);
     }
 
+    game_init();
     render_quit();
 
     SDL_Quit();
