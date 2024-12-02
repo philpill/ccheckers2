@@ -12,7 +12,7 @@ static double interval = 0.0;
 
 void loop(Game *state)
 {
-    printf(".");
+    // printf(".");
 
     Uint64 start = SDL_GetTicks64();
 
