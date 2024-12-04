@@ -4,6 +4,7 @@
 #include "render.h"
 #include "game.h"
 #include "utils.h"
+#include "pawn.h"
 
 const int RENDER_SCREEN_WIDTH = 640;
 const int RENDER_SCREEN_HEIGHT = 480;
@@ -24,30 +25,17 @@ void render_piece(int x, int y, bool isFilled)
         : SDL_RenderDrawCircle(renderer, circle_x, circle_y, radius);
     if (error < 0)
     {
-        printf("SDL_Error: %s\n", SDL_GetError());
+        printf("error: %s\n", SDL_GetError());
     }
 }
 
 void render_pieces()
 {
-    for (int i = 0; i < 3; i++)
+    Pawn* pawns = pawn_get_all();
+    for (int i = 0; i < 24; i++)
     {
-        int start = i % 2 > 0 ? 1 : 0;
-        for (int j = start; j < 8;)
-        {
-            render_piece(j, i, true);
-            j = j + 2;
-        }
-    }
-
-    for (int i = 5; i < 8; i++)
-    {
-        int start = i % 2 > 0 ? 1 : 0;
-        for (int j = start; j < 8;)
-        {
-            render_piece(j, i, false);
-            j = j + 2;
-        }
+        // printf("%d id: %d, x: %d, y: %d\n", i, pawns[i].id, pawns[i].x, pawns[i].y);
+        render_piece(pawns[i].x, pawns[i].y, pawns[i].colour == 0);
     }
 }
 
@@ -64,7 +52,7 @@ void render_board()
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             if (SDL_RenderDrawRect(renderer, &rect) < 0)
             {
-                printf("SDL_Error: %s\n", SDL_GetError());
+                printf("error: %s\n", SDL_GetError());
             }
         }
     }
@@ -76,14 +64,20 @@ void render_init()
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
-        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+        printf("error: %s\n", SDL_GetError());
     }
     else
     {
-        window = SDL_CreateWindow("crappy checkers 2: SDL edition", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, RENDER_SCREEN_WIDTH, RENDER_SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+        window = SDL_CreateWindow("crappy checkers 2: SDL edition", 
+            SDL_WINDOWPOS_UNDEFINED, 
+            SDL_WINDOWPOS_UNDEFINED, 
+            RENDER_SCREEN_WIDTH, 
+            RENDER_SCREEN_HEIGHT, 
+            SDL_WINDOW_SHOWN);
+
         if (window == NULL)
         {
-            printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+            printf("error: %s\n", SDL_GetError());
         }
         else
         {
@@ -91,7 +85,7 @@ void render_init()
 
             if (renderer == NULL)
             {
-                printf("SDL_Error: %s\n", SDL_GetError());
+                printf("error: %s\n", SDL_GetError());
             }
         }
     }

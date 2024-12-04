@@ -6,6 +6,7 @@
 #include "utils.h"
 #include "game.h"
 #include "input.h"
+#include "pawn.h"
 
 static const int fps = 30;
 static double interval = 0.0;
@@ -38,14 +39,16 @@ int main(int argc, char* args[])
 
     render_init();
     game_init();
+    pawn_init();
 
     while (!state->is_quit)
     {
         loop(state);
     }
 
-    game_init();
+    game_quit();
     render_quit();
+    pawn_quit();
 
     SDL_Quit();
 
