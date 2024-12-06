@@ -15,11 +15,14 @@ static SDL_Renderer* renderer = NULL;
 static int grid_size = 32; // 16
 static int radius = 0;
 
+static int offset_x = 10;
+static int offset_y = 10;
+
 void render_piece(int x, int y, bool isFilled)
 {
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    int circle_x = (x * grid_size) + 5 + radius;
-    int circle_y = (y * grid_size) + 5 + radius;
+    int circle_x = (x * grid_size) + (radius/2) + radius + offset_x;
+    int circle_y = (y * grid_size) + (radius/2) + radius + offset_y;
     int error = isFilled
         ? SDL_RenderFillCircle(renderer, circle_x, circle_y, radius)
         : SDL_RenderDrawCircle(renderer, circle_x, circle_y, radius);
@@ -45,8 +48,8 @@ void render_board()
     {
         for (int j = 0; j < 8; j++)
         {
-            int x = i * grid_size;
-            int y = j * grid_size;
+            int x = i * grid_size + offset_x;
+            int y = j * grid_size + offset_y;
             SDL_Rect rect = { x, y, grid_size, grid_size };
 
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
