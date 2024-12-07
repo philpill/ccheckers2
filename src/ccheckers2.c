@@ -37,9 +37,9 @@ int main(int argc, char* args[])
 
     Game *state = game_get_state();
 
+    pawn_init();
     render_init();
     game_init();
-    pawn_init();
 
     while (!state->is_quit)
     {

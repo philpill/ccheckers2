@@ -18,14 +18,19 @@ static int radius = 0;
 static int offset_x = 10;
 static int offset_y = 10;
 
-void render_piece(int x, int y, bool isFilled)
+void render_piece(Pawn *pawn)
 {
+
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    int circle_x = (x * grid_size) + (radius/2) + radius + offset_x;
-    int circle_y = (y * grid_size) + (radius/2) + radius + offset_y;
-    int error = isFilled
-        ? SDL_RenderFillCircle(renderer, circle_x, circle_y, radius)
-        : SDL_RenderDrawCircle(renderer, circle_x, circle_y, radius);
+
+    if (pawn->is_hover)
+    {
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    }
+    
+    int error = pawn->colour == 0
+        ? SDL_RenderFillCircle(renderer, pawn->grid_x, pawn->grid_y, radius)
+        : SDL_RenderDrawCircle(renderer, pawn->grid_x, pawn->grid_y, radius);
     if (error < 0)
     {
         printf("error: %s\n", SDL_GetError());
@@ -34,11 +39,10 @@ void render_piece(int x, int y, bool isFilled)
 
 void render_pieces()
 {
-    Pawn* pawns = pawn_get_all();
+    Pawn *pawns = pawn_get_all();
     for (int i = 0; i < 24; i++)
     {
-        // printf("%d id: %d, x: %d, y: %d\n", i, pawns[i].id, pawns[i].x, pawns[i].y);
-        render_piece(pawns[i].x, pawns[i].y, pawns[i].colour == 0);
+        render_piece(&pawns[i]);
     }
 }
 
@@ -61,21 +65,29 @@ void render_board()
     }
 }
 
+void init_pieces()
+{
+    Pawn* pawns = pawn_get_all();
+    for (int i = 0; i < 24; i++)
+    {
+        pawns[i].grid_x = (pawns[i].x * grid_size) + (radius / 2) + radius + offset_x;
+        pawns[i].grid_y = (pawns[i].y * grid_size) + (radius / 2) + radius + offset_y;
+    }
+}
+
 void render_init()
 {
-    radius = (grid_size / 2) - 6; //10
-
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         printf("error: %s\n", SDL_GetError());
     }
     else
     {
-        window = SDL_CreateWindow("crappy checkers 2: SDL edition", 
-            SDL_WINDOWPOS_UNDEFINED, 
-            SDL_WINDOWPOS_UNDEFINED, 
-            RENDER_SCREEN_WIDTH, 
-            RENDER_SCREEN_HEIGHT, 
+        window = SDL_CreateWindow("crappy checkers 2: SDL edition",
+            SDL_WINDOWPOS_UNDEFINED,
+            SDL_WINDOWPOS_UNDEFINED,
+            RENDER_SCREEN_WIDTH,
+            RENDER_SCREEN_HEIGHT,
             SDL_WINDOW_SHOWN);
 
         if (window == NULL)
@@ -90,6 +102,9 @@ void render_init()
             {
                 printf("error: %s\n", SDL_GetError());
             }
+
+            radius = (grid_size / 2) - 6; //10
+            init_pieces();
         }
     }
 }
