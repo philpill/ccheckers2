@@ -13,24 +13,28 @@ static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
 
 static int grid_size = 32; // 16
-static int radius = 0;
 
 static int offset_x = 10;
 static int offset_y = 10;
 
-void render_piece(Pawn *pawn)
+void render_piece(Pawn* pawn)
 {
-
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-    if (pawn->is_hover)
+    if (pawn->is_selected)
+    {
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    }
+    else if (pawn->is_hover)
     {
         SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     }
-    
+    else
+    {
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    }
+
     int error = pawn->colour == 0
-        ? SDL_RenderFillCircle(renderer, pawn->grid_x, pawn->grid_y, radius)
-        : SDL_RenderDrawCircle(renderer, pawn->grid_x, pawn->grid_y, radius);
+        ? SDL_RenderFillCircle(renderer, pawn->grid_x, pawn->grid_y, pawn->radius)
+        : SDL_RenderDrawCircle(renderer, pawn->grid_x, pawn->grid_y, pawn->radius);
     if (error < 0)
     {
         printf("error: %s\n", SDL_GetError());
@@ -39,7 +43,7 @@ void render_piece(Pawn *pawn)
 
 void render_pieces()
 {
-    Pawn *pawns = pawn_get_all();
+    Pawn* pawns = pawn_get_all();
     for (int i = 0; i < 24; i++)
     {
         render_piece(&pawns[i]);
@@ -48,30 +52,39 @@ void render_pieces()
 
 void render_board()
 {
-    for (int i = 0; i < 8; i++)
-    {
-        for (int j = 0; j < 8; j++)
-        {
-            int x = i * grid_size + offset_x;
-            int y = j * grid_size + offset_y;
-            SDL_Rect rect = { x, y, grid_size, grid_size };
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-            if (SDL_RenderDrawRect(renderer, &rect) < 0)
-            {
-                printf("error: %s\n", SDL_GetError());
-            }
+    for (int i = 0; i < 9; i++)
+    {
+        if (SDL_RenderDrawLine(renderer,
+            offset_x, 
+            offset_y + (grid_size * i), 
+            offset_x + (grid_size * 8), 
+            offset_y + (grid_size * i)) < 0)
+        {
+            printf("error: %s\n", SDL_GetError());
+        }
+
+        if (SDL_RenderDrawLine(renderer,
+            offset_x + (grid_size * i), 
+            offset_y, 
+            offset_x + (grid_size * i), 
+            offset_y + (grid_size * 8)) < 0)
+        {
+            printf("error: %s\n", SDL_GetError());
         }
     }
 }
 
 void init_pieces()
 {
+    int radius = (grid_size / 2) - 6; //10
     Pawn* pawns = pawn_get_all();
     for (int i = 0; i < 24; i++)
     {
-        pawns[i].grid_x = (pawns[i].x * grid_size) + (radius / 2) + radius + offset_x;
-        pawns[i].grid_y = (pawns[i].y * grid_size) + (radius / 2) + radius + offset_y;
+        pawns[i].radius = radius;
+        pawns[i].grid_x = (pawns[i].x * grid_size) + (pawns[i].radius / 2) + pawns[i].radius + offset_x;
+        pawns[i].grid_y = (pawns[i].y * grid_size) + (pawns[i].radius / 2) + pawns[i].radius + offset_y;
     }
 }
 
@@ -94,18 +107,15 @@ void render_init()
         {
             printf("error: %s\n", SDL_GetError());
         }
-        else
+
+        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+        if (renderer == NULL)
         {
-            renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-            if (renderer == NULL)
-            {
-                printf("error: %s\n", SDL_GetError());
-            }
-
-            radius = (grid_size / 2) - 6; //10
-            init_pieces();
+            printf("error: %s\n", SDL_GetError());
         }
+
+        init_pieces();
     }
 }
 

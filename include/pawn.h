@@ -11,8 +11,11 @@ typedef struct {
     int y;
     int grid_x;
     int grid_y;
+    int radius;
     bool is_king;
     bool is_hover;
+    bool is_selected;
+    bool is_active;
 } Pawn;
 
 void pawn_init();
