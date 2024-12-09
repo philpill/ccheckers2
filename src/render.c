@@ -57,18 +57,18 @@ void render_board()
     for (int i = 0; i < 9; i++)
     {
         if (SDL_RenderDrawLine(renderer,
-            offset_x, 
-            offset_y + (grid_size * i), 
-            offset_x + (grid_size * 8), 
+            offset_x,
+            offset_y + (grid_size * i),
+            offset_x + (grid_size * 8),
             offset_y + (grid_size * i)) < 0)
         {
             printf("error: %s\n", SDL_GetError());
         }
 
         if (SDL_RenderDrawLine(renderer,
-            offset_x + (grid_size * i), 
-            offset_y, 
-            offset_x + (grid_size * i), 
+            offset_x + (grid_size * i),
+            offset_y,
+            offset_x + (grid_size * i),
             offset_y + (grid_size * 8)) < 0)
         {
             printf("error: %s\n", SDL_GetError());
@@ -88,35 +88,33 @@ void init_pieces()
     }
 }
 
-void render_init()
+void render_init(Game *state)
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         printf("error: %s\n", SDL_GetError());
     }
-    else
+
+    window = SDL_CreateWindow("crappy checkers 2: SDL edition",
+        SDL_WINDOWPOS_UNDEFINED,
+        SDL_WINDOWPOS_UNDEFINED,
+        RENDER_SCREEN_WIDTH,
+        RENDER_SCREEN_HEIGHT,
+        SDL_WINDOW_SHOWN);
+
+    if (window == NULL)
     {
-        window = SDL_CreateWindow("crappy checkers 2: SDL edition",
-            SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
-            RENDER_SCREEN_WIDTH,
-            RENDER_SCREEN_HEIGHT,
-            SDL_WINDOW_SHOWN);
-
-        if (window == NULL)
-        {
-            printf("error: %s\n", SDL_GetError());
-        }
-
-        renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-        if (renderer == NULL)
-        {
-            printf("error: %s\n", SDL_GetError());
-        }
-
-        init_pieces();
+        printf("error: %s\n", SDL_GetError());
     }
+
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+    if (renderer == NULL)
+    {
+        printf("error: %s\n", SDL_GetError());
+    }
+
+    init_pieces();
 }
 
 void render_exec(Game* state)

@@ -1,18 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "game.h"
 #include "pawn.h"
 
-static Pawn* pawns_ptr;
+static Game *game_state;
 
 Pawn* pawn_get_all()
 {
-    return pawns_ptr;
+    return game_state->pawns;
 }
 
-void pawn_init()
+void pawn_init(Game *state)
 {
-    pawns_ptr = malloc(24 * sizeof(Pawn));
+    game_state = state;
 
     int id = 0;
     for (int i = 0; i < 3; i++)
@@ -20,15 +21,15 @@ void pawn_init()
         int start = i % 2 > 0 ? 1 : 0;
         for (int j = start; j < 8;)
         {
-            pawns_ptr[id].id = id;
-            pawns_ptr[id].colour = 0;
-            pawns_ptr[id].x = j;
-            pawns_ptr[id].y = i;
-            pawns_ptr[id].radius = 0;
-            pawns_ptr[id].is_king = false;
-            pawns_ptr[id].is_hover = false;
-            pawns_ptr[id].is_selected = false;
-            pawns_ptr[id].is_active = true;
+            game_state->pawns[id].id = id;
+            game_state->pawns[id].colour = 0;
+            game_state->pawns[id].x = j;
+            game_state->pawns[id].y = i;
+            game_state->pawns[id].radius = 0;
+            game_state->pawns[id].is_king = false;
+            game_state->pawns[id].is_hover = false;
+            game_state->pawns[id].is_selected = false;
+            game_state->pawns[id].is_active = true;
 
             id++;
             j = j + 2;
@@ -40,15 +41,15 @@ void pawn_init()
         int start = i % 2 > 0 ? 1 : 0;
         for (int j = start; j < 8;)
         {
-            pawns_ptr[id].id = id;
-            pawns_ptr[id].colour = 1;
-            pawns_ptr[id].x = j;
-            pawns_ptr[id].y = i;
-            pawns_ptr[id].radius = 0;
-            pawns_ptr[id].is_king = false;
-            pawns_ptr[id].is_hover = false;
-            pawns_ptr[id].is_selected = false;
-            pawns_ptr[id].is_active = true;
+            game_state->pawns[id].id = id;
+            game_state->pawns[id].colour = 1;
+            game_state->pawns[id].x = j;
+            game_state->pawns[id].y = i;
+            game_state->pawns[id].radius = 0;
+            game_state->pawns[id].is_king = false;
+            game_state->pawns[id].is_hover = false;
+            game_state->pawns[id].is_selected = false;
+            game_state->pawns[id].is_active = true;
 
             id++;
             j = j + 2;
@@ -62,24 +63,24 @@ void pawn_mouse_event(int x, int y, Uint32 mouse_state)
 
     for (int i = 0; i < 24; i++)
     {
-        if (pawns_ptr[i].is_active)
+        if (game_state->pawns[i].is_active)
         {
-            double dist = abs(x - pawns_ptr[i].grid_x) + abs(y - pawns_ptr[i].grid_y);
+            double dist = abs(x - game_state->pawns[i].grid_x) + abs(y - game_state->pawns[i].grid_y);
 
-            if (dist <= pawns_ptr[i].radius)
+            if (dist <= game_state->pawns[i].radius)
             {
-                pawns_ptr[i].is_hover = true;
+                game_state->pawns[i].is_hover = true;
                 if (mouse_state == SDL_BUTTON_LEFT)
                 {
-                    pawns_ptr[i].is_selected = true;
+                    game_state->pawns[i].is_selected = true;
                 }
             }
             else
             {
-                pawns_ptr[i].is_hover = false;
+                game_state->pawns[i].is_hover = false;
                 if (mouse_state == SDL_BUTTON_LEFT)
                 {
-                    pawns_ptr[i].is_selected = false;
+                    game_state->pawns[i].is_selected = false;
                 }
             }
         }
@@ -88,6 +89,6 @@ void pawn_mouse_event(int x, int y, Uint32 mouse_state)
 
 void pawn_quit()
 {
-    free(pawns_ptr);
+
 }
 

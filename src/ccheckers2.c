@@ -35,11 +35,11 @@ int main(int argc, char* args[])
 
     interval = 1.0 / fps * 1000.0;
 
+    game_init();
     Game *state = game_get_state();
 
-    pawn_init();
-    render_init();
-    game_init();
+    pawn_init(state);
+    render_init(state);
 
     while (!state->is_quit)
     {
