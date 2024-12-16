@@ -7,6 +7,7 @@
 #include "game.h"
 #include "input.h"
 #include "pawn.h"
+#include "board.h"
 
 static const int fps = 30;
 static double interval = 0.0;
@@ -19,6 +20,7 @@ void loop(Game *state)
 
     input_exec(state);
     render_exec(state);
+    board_exec(state);
 
     Uint64 elapsed = SDL_GetTicks64() - start;
 
@@ -39,6 +41,7 @@ int main(int argc, char* args[])
     Game *state = game_get_state();
 
     pawn_init(state);
+    board_init();
     render_init(state);
 
     while (!state->is_quit)
@@ -49,6 +52,7 @@ int main(int argc, char* args[])
     game_quit();
     render_quit();
     pawn_quit();
+    board_quit();
 
     SDL_Quit();
 

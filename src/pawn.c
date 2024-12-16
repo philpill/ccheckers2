@@ -1,17 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include "game.h"
 #include "pawn.h"
 
-static Game *game_state;
+static Game* game_state;
 
 Pawn* pawn_get_all()
 {
     return game_state->pawns;
 }
 
-void pawn_init(Game *state)
+void pawn_init(Game* state)
 {
     game_state = state;
 
@@ -57,34 +56,19 @@ void pawn_init(Game *state)
     }
 }
 
-void pawn_mouse_event(int x, int y, Uint32 mouse_state)
+void pawn_mouse_click(Pawn* pawn)
 {
-    // printf("pawn_mouse_event x: %d, y: %d, mouse: %d\n", x, y, mouse_state);
-
-    for (int i = 0; i < 24; i++)
+    if (pawn->is_hover)
     {
-        if (game_state->pawns[i].is_active)
-        {
-            double dist = abs(x - game_state->pawns[i].grid_x) + abs(y - game_state->pawns[i].grid_y);
-
-            if (dist <= game_state->pawns[i].radius)
-            {
-                game_state->pawns[i].is_hover = true;
-                if (mouse_state == SDL_BUTTON_LEFT)
-                {
-                    game_state->pawns[i].is_selected = true;
-                }
-            }
-            else
-            {
-                game_state->pawns[i].is_hover = false;
-                if (mouse_state == SDL_BUTTON_LEFT)
-                {
-                    game_state->pawns[i].is_selected = false;
-                }
-            }
-        }
+        pawn->is_selected = true;
     }
+}
+
+void pawn_mouse_hover(Pawn* pawn, int x, int y)
+{
+    double dist = abs(x - pawn->grid_x) + abs(y - pawn->grid_y);
+
+    pawn->is_hover = dist <= pawn->radius;
 }
 
 void pawn_quit()

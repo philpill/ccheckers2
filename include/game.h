@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <stdbool.h>
+#include <sdl.h>
 
 typedef struct {
     int id;
@@ -25,6 +26,7 @@ typedef struct {
 
 void game_init();
 Game* game_get_state();
+void game_mouse_event(int x, int y, Uint32 mouse_state);
 void game_quit();
 
 #endif

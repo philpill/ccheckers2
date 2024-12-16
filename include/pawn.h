@@ -8,5 +8,6 @@
 void pawn_init(Game *state);
 Pawn *pawn_get_all();
 void pawn_quit();
-void pawn_mouse_event(int x, int y, Uint32 mouse_state);
+void pawn_mouse_click(Pawn *pawn);
+void pawn_mouse_hover(Pawn *pawn, int x, int y);
 #endif
