@@ -12,10 +12,12 @@ const int RENDER_SCREEN_HEIGHT = 480;
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
 
-static int grid_size = 32; // 16
+static int grid_size; 
 
 static int offset_x = 10;
 static int offset_y = 10;
+
+static Game* game_state;
 
 void render_piece(Pawn* pawn)
 {
@@ -41,6 +43,13 @@ void render_piece(Pawn* pawn)
     }
 }
 
+void render_tile(Tile *tile)
+{
+    SDL_Rect fillRect = { 0, 0, 32, 32 };
+    SDL_SetRenderDrawColor( renderer, 0xFF, 0x00, 0x00, 0xFF );        
+    SDL_RenderFillRect( renderer, &fillRect );
+}
+
 void render_pieces()
 {
     Pawn* pawns = pawn_get_all();
@@ -48,6 +57,11 @@ void render_pieces()
     {
         render_piece(&pawns[i]);
     }
+}
+
+void render_tiles()
+{
+    render_tile(game_state->cursor_tile);
 }
 
 void render_board()
@@ -90,6 +104,8 @@ void init_pieces()
 
 void render_init(Game *state)
 {
+    game_state = state;
+
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         printf("error: %s\n", SDL_GetError());
@@ -114,6 +130,8 @@ void render_init(Game *state)
         printf("error: %s\n", SDL_GetError());
     }
 
+    grid_size = state->grid_size;
+
     init_pieces();
 }
 
@@ -122,6 +140,7 @@ void render_exec(Game* state)
     if (window != NULL)
     {
         render_board();
+        render_tiles();
         render_pieces();
         SDL_RenderPresent(renderer);
     }

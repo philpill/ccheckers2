@@ -20,8 +20,21 @@ typedef struct {
 
 typedef struct {
     int id;
+    int size;
+    int x;
+    int y;
+    int colour;
+    bool is_enabled;
+} Tile;
+
+typedef struct {
+    int id;
+    int grid_size;
     bool is_quit;
     Pawn *pawns;
+    Tile *movement_tiles;
+    Tile *cursor_tile;
+    Tile *active_tile;
 } Game;
 
 void game_init();
