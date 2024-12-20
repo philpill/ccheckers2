@@ -10,6 +10,8 @@ void game_init()
 {
     game_state.id = 1;
     game_state.grid_size = 32;
+    game_state.board_offset_x = 10;
+    game_state.board_offset_y = 10;
     game_state.is_quit = false;
     game_state.pawns = malloc(24 * sizeof(Pawn));
 

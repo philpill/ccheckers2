@@ -30,6 +30,8 @@ typedef struct {
 typedef struct {
     int id;
     int grid_size;
+    int board_offset_x;
+    int board_offset_y;
     bool is_quit;
     Pawn *pawns;
     Tile *movement_tiles;

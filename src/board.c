@@ -43,7 +43,15 @@ void board_exec(Game* state)
 
 void board_mouse_hover(int x, int y)
 {
-
+    int tile_x = (x - game_state->board_offset_x) / game_state->grid_size;
+    int tile_y = (y - game_state->board_offset_y)/ game_state->grid_size;
+ 
+    game_state->cursor_tile->x = tile_x
+        * game_state->grid_size
+        + game_state->board_offset_x;
+    game_state->cursor_tile->y = tile_y 
+        * game_state->grid_size
+        + game_state->board_offset_y;
 }
 
 void board_mouse_click(int x, int y)

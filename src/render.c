@@ -12,10 +12,7 @@ const int RENDER_SCREEN_HEIGHT = 480;
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
 
-static int grid_size; 
-
-static int offset_x = 10;
-static int offset_y = 10;
+static int grid_size;
 
 static Game* game_state;
 
@@ -43,11 +40,16 @@ void render_piece(Pawn* pawn)
     }
 }
 
-void render_tile(Tile *tile)
+void render_tile(Tile* tile)
 {
-    SDL_Rect fillRect = { 0, 0, 32, 32 };
-    SDL_SetRenderDrawColor( renderer, 0xFF, 0x00, 0x00, 0xFF );        
-    SDL_RenderFillRect( renderer, &fillRect );
+    SDL_Rect fillRect = {
+        tile->x + 1,
+        tile->y + 1,
+        game_state->grid_size - 1,
+        game_state->grid_size - 1
+    };
+    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0xFF, 0xFF);
+    SDL_RenderFillRect(renderer, &fillRect);
 }
 
 void render_pieces()
@@ -71,19 +73,19 @@ void render_board()
     for (int i = 0; i < 9; i++)
     {
         if (SDL_RenderDrawLine(renderer,
-            offset_x,
-            offset_y + (grid_size * i),
-            offset_x + (grid_size * 8),
-            offset_y + (grid_size * i)) < 0)
+            game_state->board_offset_x,
+            game_state->board_offset_y + (grid_size * i),
+            game_state->board_offset_x + (grid_size * 8),
+            game_state->board_offset_y + (grid_size * i)) < 0)
         {
             printf("error: %s\n", SDL_GetError());
         }
 
         if (SDL_RenderDrawLine(renderer,
-            offset_x + (grid_size * i),
-            offset_y,
-            offset_x + (grid_size * i),
-            offset_y + (grid_size * 8)) < 0)
+            game_state->board_offset_x + (grid_size * i),
+            game_state->board_offset_y,
+            game_state->board_offset_x + (grid_size * i),
+            game_state->board_offset_y + (grid_size * 8)) < 0)
         {
             printf("error: %s\n", SDL_GetError());
         }
@@ -97,12 +99,18 @@ void init_pieces()
     for (int i = 0; i < 24; i++)
     {
         pawns[i].radius = radius;
-        pawns[i].grid_x = (pawns[i].x * grid_size) + (pawns[i].radius / 2) + pawns[i].radius + offset_x;
-        pawns[i].grid_y = (pawns[i].y * grid_size) + (pawns[i].radius / 2) + pawns[i].radius + offset_y;
+        pawns[i].grid_x = (pawns[i].x * grid_size) 
+            + (pawns[i].radius / 2) 
+            + pawns[i].radius 
+            + game_state->board_offset_x;
+        pawns[i].grid_y = (pawns[i].y * grid_size) 
+            + (pawns[i].radius / 2) 
+            + pawns[i].radius 
+            + game_state->board_offset_y;
     }
 }
 
-void render_init(Game *state)
+void render_init(Game* state)
 {
     game_state = state;
 
@@ -139,6 +147,8 @@ void render_exec(Game* state)
 {
     if (window != NULL)
     {
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
         render_board();
         render_tiles();
         render_pieces();
