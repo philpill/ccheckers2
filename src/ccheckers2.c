@@ -21,6 +21,7 @@ void loop(Game *state)
     input_exec(state);
     render_exec(state);
     board_exec(state);
+    pawn_exec(state);
 
     Uint64 elapsed = SDL_GetTicks64() - start;
 

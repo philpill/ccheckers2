@@ -12,23 +12,54 @@ const int RENDER_SCREEN_HEIGHT = 480;
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
 
-static int grid_size;
-
 static Game* game_state;
+
+// 0 white
+// 1 black
+// 2 red
+// 3 green
+// 4 blue
+// 5 grey
+static void set_render_colour(int index)
+{
+    switch (index)
+    {
+    case 0:
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        break;
+    case 1:
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        break;
+    case 2:
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        break;
+    case 3:
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        break;
+    case 4:
+        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+        break;
+    case 5:
+        SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+        break;
+    default:
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    }
+}
 
 void render_piece(Pawn* pawn)
 {
     if (pawn->is_selected)
     {
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        set_render_colour(3);
     }
     else if (pawn->is_hover)
     {
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        set_render_colour(2);
     }
     else
     {
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        set_render_colour(0);
     }
 
     int error = pawn->colour == 0
@@ -42,20 +73,24 @@ void render_piece(Pawn* pawn)
 
 void render_tile(Tile* tile)
 {
-    SDL_Rect fillRect = {
-        tile->x + 1,
-        tile->y + 1,
-        game_state->grid_size - 1,
-        game_state->grid_size - 1
-    };
-    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0xFF, 0xFF);
-    SDL_RenderFillRect(renderer, &fillRect);
+    if (tile->is_enabled)
+    {
+        SDL_Rect fillRect = {
+            tile->x + 1,
+            tile->y + 1,
+            game_state->grid_size - 1,
+            game_state->grid_size - 1
+        };
+
+        set_render_colour(tile->colour);
+        SDL_RenderFillRect(renderer, &fillRect);
+    }
 }
 
 void render_pieces()
 {
     Pawn* pawns = pawn_get_all();
-    for (int i = 0; i < 24; i++)
+    for (int i = 0; i < game_state->pawn_count; i++)
     {
         render_piece(&pawns[i]);
     }
@@ -63,50 +98,69 @@ void render_pieces()
 
 void render_tiles()
 {
+    render_tile(game_state->active_tile);
     render_tile(game_state->cursor_tile);
 }
 
 void render_board()
 {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    set_render_colour(0);
 
     for (int i = 0; i < 9; i++)
     {
         if (SDL_RenderDrawLine(renderer,
             game_state->board_offset_x,
-            game_state->board_offset_y + (grid_size * i),
-            game_state->board_offset_x + (grid_size * 8),
-            game_state->board_offset_y + (grid_size * i)) < 0)
+            game_state->board_offset_y + (game_state->grid_size * i),
+            game_state->board_offset_x + (game_state->grid_size * 8),
+            game_state->board_offset_y + (game_state->grid_size * i)) < 0)
         {
             printf("error: %s\n", SDL_GetError());
         }
 
         if (SDL_RenderDrawLine(renderer,
-            game_state->board_offset_x + (grid_size * i),
+            game_state->board_offset_x + (game_state->grid_size * i),
             game_state->board_offset_y,
-            game_state->board_offset_x + (grid_size * i),
-            game_state->board_offset_y + (grid_size * 8)) < 0)
+            game_state->board_offset_x + (game_state->grid_size * i),
+            game_state->board_offset_y + (game_state->grid_size * 8)) < 0)
         {
             printf("error: %s\n", SDL_GetError());
         }
     }
 }
 
+void render_update_grid_x(Pawn* pawn)
+{
+    int radius = (game_state->grid_size / 2) - 6; //10
+
+    pawn->radius = radius;
+    pawn->grid_x = (pawn->x * game_state->grid_size)
+        + (pawn->radius / 2)
+        + pawn->radius
+        + game_state->board_offset_x;
+
+    // printf("%d\n", pawn->grid_x);
+}
+
+void render_update_grid_y(Pawn* pawn)
+{
+    int radius = (game_state->grid_size / 2) - 6; //10
+
+    pawn->radius = radius;
+    pawn->grid_y = (pawn->y * game_state->grid_size)
+        + (pawn->radius / 2)
+        + pawn->radius
+        + game_state->board_offset_y;
+
+    // printf("%d\n", pawn->grid_y);
+}
+
 void init_pieces()
 {
-    int radius = (grid_size / 2) - 6; //10
     Pawn* pawns = pawn_get_all();
-    for (int i = 0; i < 24; i++)
+    for (int i = 0; i < game_state->pawn_count; i++)
     {
-        pawns[i].radius = radius;
-        pawns[i].grid_x = (pawns[i].x * grid_size) 
-            + (pawns[i].radius / 2) 
-            + pawns[i].radius 
-            + game_state->board_offset_x;
-        pawns[i].grid_y = (pawns[i].y * grid_size) 
-            + (pawns[i].radius / 2) 
-            + pawns[i].radius 
-            + game_state->board_offset_y;
+        render_update_grid_x(&pawns[i]);
+        render_update_grid_y(&pawns[i]);
     }
 }
 
@@ -138,8 +192,6 @@ void render_init(Game* state)
         printf("error: %s\n", SDL_GetError());
     }
 
-    grid_size = state->grid_size;
-
     init_pieces();
 }
 
@@ -147,7 +199,7 @@ void render_exec(Game* state)
 {
     if (window != NULL)
     {
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        set_render_colour(1);
         SDL_RenderClear(renderer);
         render_board();
         render_tiles();

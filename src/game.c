@@ -1,17 +1,20 @@
 #include <stdlib.h>
 #include <sdl.h>
+#include <stdio.h>
 #include "game.h"
 #include "pawn.h"
 #include "board.h"
+#include "render.h"
 
 static Game game_state;
 
 void game_init()
 {
     game_state.id = 1;
-    game_state.grid_size = 32;
     game_state.board_offset_x = 10;
     game_state.board_offset_y = 10;
+    game_state.selected_pawn_id = -1;
+    game_state.pawn_count = 24;
     game_state.is_quit = false;
     game_state.pawns = malloc(24 * sizeof(Pawn));
 
@@ -37,23 +40,46 @@ void game_mouse_event(int x, int y, Uint32 mouse_state)
 {
     bool is_click = mouse_state == SDL_BUTTON_LEFT;
 
-    board_mouse_hover(x, y);
-
-    if (is_click)
+    if (x < game_state.board_bound_x && y < game_state.board_bound_x)
     {
-        board_mouse_click(x, y);
-    }
+        board_mouse_hover(x, y);
 
-    for (int i = 0; i < 24; i++)
-    {
-        if (game_state.pawns[i].is_active)
+        if (is_click)
         {
-            pawn_mouse_hover(&game_state.pawns[i], x, y);
+            board_mouse_click(x, y);
 
-            if (is_click)
+            if (game_state.selected_pawn_id > -1)
             {
-                game_state.pawns[i].is_selected = false;
-                pawn_mouse_click(&game_state.pawns[i]);
+                Pawn* pawn = pawn_get_by_id(game_state.selected_pawn_id);
+
+                // printf("%p\n", pawn);
+
+                if (pawn != NULL)
+                {
+                    // printf("%d\n", pawn->id);
+
+
+                    // get grid x from x
+                    // get grid y from y
+
+                    // snap to position
+                    pawn->grid_x = board_get_snapped_x(x) + (game_state.grid_size/2);
+                    pawn->grid_y = board_get_snapped_y(y) + (game_state.grid_size/2);
+                    pawn->has_moved = true;
+                }
+            }
+        }
+
+        for (int i = 0; i < game_state.pawn_count; i++)
+        {
+            if (game_state.pawns[i].is_active)
+            {
+                pawn_mouse_hover(&game_state.pawns[i], x, y);
+
+                if (is_click)
+                {
+                    pawn_mouse_click(&game_state.pawns[i]);
+                }
             }
         }
     }
