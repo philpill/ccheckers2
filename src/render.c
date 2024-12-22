@@ -5,6 +5,7 @@
 #include "game.h"
 #include "utils.h"
 #include "pawn.h"
+#include "board.h"
 
 const int RENDER_SCREEN_WIDTH = 640;
 const int RENDER_SCREEN_HEIGHT = 480;
@@ -131,27 +132,17 @@ void render_board()
 void render_update_grid_x(Pawn* pawn)
 {
     int radius = (game_state->grid_size / 2) - 6; //10
-
     pawn->radius = radius;
-    pawn->grid_x = (pawn->x * game_state->grid_size)
-        + (pawn->radius / 2)
-        + pawn->radius
-        + game_state->board_offset_x;
-
-    // printf("%d\n", pawn->grid_x);
+    int grid_x = (pawn->x * game_state->grid_size) + game_state->board_offset_x;
+    pawn->grid_x = board_get_snapped_center_x(grid_x);
 }
 
 void render_update_grid_y(Pawn* pawn)
 {
     int radius = (game_state->grid_size / 2) - 6; //10
-
     pawn->radius = radius;
-    pawn->grid_y = (pawn->y * game_state->grid_size)
-        + (pawn->radius / 2)
-        + pawn->radius
-        + game_state->board_offset_y;
-
-    // printf("%d\n", pawn->grid_y);
+    int grid_y = (pawn->y * game_state->grid_size) + game_state->board_offset_y;
+    pawn->grid_y = board_get_snapped_center_y(grid_y);
 }
 
 void init_pieces()

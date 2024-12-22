@@ -7,22 +7,30 @@ static Game* game_state;
 int board_get_snapped_x(int x)
 {
     int tile_pos = (x - game_state->board_offset_x) / game_state->grid_size;
- 
     int snapped_pos = tile_pos
         * game_state->grid_size
         + game_state->board_offset_x;
-
     return snapped_pos;
 }
 
 int board_get_snapped_y(int y)
 {
     int tile_pos = (y - game_state->board_offset_y) / game_state->grid_size;
- 
     int snapped_pos = tile_pos
         * game_state->grid_size
         + game_state->board_offset_y;
+    return snapped_pos;
+}
 
+int board_get_snapped_center_x(int x)
+{
+    int snapped_pos = board_get_snapped_x(x) + game_state->grid_size/2;
+    return snapped_pos;
+}
+
+int board_get_snapped_center_y(int y)
+{
+    int snapped_pos = board_get_snapped_y(y) + game_state->grid_size/2;
     return snapped_pos;
 }
 

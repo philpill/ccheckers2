@@ -16,7 +16,6 @@ typedef struct {
     bool is_hover;
     bool is_selected;
     bool is_active;
-    bool has_moved;
 } Pawn;
 
 typedef struct {

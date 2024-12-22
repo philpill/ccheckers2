@@ -52,20 +52,13 @@ void game_mouse_event(int x, int y, Uint32 mouse_state)
             {
                 Pawn* pawn = pawn_get_by_id(game_state.selected_pawn_id);
 
-                // printf("%p\n", pawn);
+                int snapped_x = board_get_snapped_center_x(x);
+                int snapped_y = board_get_snapped_center_y(y);
 
-                if (pawn != NULL)
+                if (pawn != NULL && !pawn_is_at_location(snapped_x, snapped_y))
                 {
-                    // printf("%d\n", pawn->id);
-
-
-                    // get grid x from x
-                    // get grid y from y
-
-                    // snap to position
-                    pawn->grid_x = board_get_snapped_x(x) + (game_state.grid_size/2);
-                    pawn->grid_y = board_get_snapped_y(y) + (game_state.grid_size/2);
-                    pawn->has_moved = true;
+                    pawn_set_x(pawn, snapped_x);
+                    pawn_set_y(pawn, snapped_y);
                 }
             }
         }

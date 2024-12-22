@@ -49,7 +49,6 @@ void pawn_init(Game* state)
             game_state->pawns[id].is_hover = false;
             game_state->pawns[id].is_selected = false;
             game_state->pawns[id].is_active = true;
-            game_state->pawns[id].has_moved = false;
 
             id++;
             j = j + 2;
@@ -88,7 +87,7 @@ Pawn* pawn_get_by_id(int id)
 
     for (int i = 0; i < game_state->pawn_count; i++)
     {
-        if (game_state->pawns[i].id == id) 
+        if (game_state->pawns[i].id == id)
         {
             return &(game_state->pawns[i]);
 
@@ -98,17 +97,47 @@ Pawn* pawn_get_by_id(int id)
     return NULL;
 }
 
-void pawn_exec()
+bool pawn_is_at_location(int x, int y)
 {
+    // printf("%d %d\n", x, y);
+
     for (int i = 0; i < game_state->pawn_count; i++)
     {
-        if (game_state->pawns[i].has_moved && game_state->pawns[i].is_selected) 
-        {
-            game_state->pawns[i].is_selected = false;
-            game_state->selected_pawn_id = -1;
+        // printf("%d: %d %d\n",
+        //     game_state->pawns[i].id,
+        //     game_state->pawns[i].grid_x,
+        //     game_state->pawns[i].grid_y);
 
+        if (x == game_state->pawns[i].grid_x
+            && y == game_state->pawns[i].grid_y)
+        {
+            return true;
         }
     }
+    return false;
+}
+
+void pawn_set_x(Pawn* pawn, int x)
+{
+    pawn->grid_x = x;
+}
+
+void pawn_set_y(Pawn* pawn, int y)
+{
+    pawn->grid_y = y;
+}
+
+void pawn_exec()
+{
+    // for (int i = 0; i < game_state->pawn_count; i++)
+    // {
+    //     if (game_state->pawns[i].is_selected) 
+    //     {
+    //         game_state->pawns[i].is_selected = false;
+    //         game_state->selected_pawn_id = -1;
+
+    //     }
+    // }
 }
 
 void pawn_quit()
