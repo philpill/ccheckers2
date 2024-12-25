@@ -4,6 +4,34 @@
 
 static Game* game_state;
 
+int board_grid_to_x(int grid)
+{
+    int x = (grid * game_state->grid_size) + game_state->board_offset_x + 1;
+
+    return x;
+}
+
+int board_grid_to_y(int grid)
+{
+    int y = (grid * game_state->grid_size) + game_state->board_offset_y + 1;
+
+    return y;
+}
+
+int board_x_to_grid(int x)
+{
+    int grid = x - game_state->board_offset_x / game_state->grid_size;
+
+    return grid;
+}
+
+int board_y_to_grid(int y)
+{
+    int grid = y - game_state->board_offset_y / game_state->grid_size;
+
+    return grid;
+}
+
 int board_get_snapped_x(int x)
 {
     int tile_pos = (x - game_state->board_offset_x) / game_state->grid_size;

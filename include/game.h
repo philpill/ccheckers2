@@ -12,6 +12,7 @@ typedef struct {
     int grid_x;
     int grid_y;
     int radius;
+    int direction;
     bool is_king;
     bool is_hover;
     bool is_selected;
@@ -42,6 +43,11 @@ typedef struct {
     Tile *cursor_tile;
     Tile *active_tile;
 } Game;
+
+typedef struct {
+    int x;
+    int y;
+} Grid;
 
 void game_init();
 Game* game_get_state();

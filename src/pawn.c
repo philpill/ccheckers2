@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "game.h"
 #include "pawn.h"
+#include "board.h"
 
 static Game* game_state;
 
@@ -25,6 +26,7 @@ void pawn_init(Game* state)
             game_state->pawns[id].x = j;
             game_state->pawns[id].y = i;
             game_state->pawns[id].radius = 0;
+            game_state->pawns[id].direction = 1;
             game_state->pawns[id].is_king = false;
             game_state->pawns[id].is_hover = false;
             game_state->pawns[id].is_selected = false;
@@ -45,6 +47,7 @@ void pawn_init(Game* state)
             game_state->pawns[id].x = j;
             game_state->pawns[id].y = i;
             game_state->pawns[id].radius = 0;
+            game_state->pawns[id].direction = -1;
             game_state->pawns[id].is_king = false;
             game_state->pawns[id].is_hover = false;
             game_state->pawns[id].is_selected = false;
@@ -65,13 +68,50 @@ void pawn_deselect_all()
     }
 }
 
+void pawn_get_moves(Pawn* pawn, Grid* grid_1, Grid* grid_2, Grid* grid_3, Grid* grid_4)
+{
+    int grid_x = board_x_to_grid(pawn->x);
+    int grid_y = board_y_to_grid(pawn->y);
+
+    grid_1->x = grid_x + 1;
+    grid_1->y = grid_y + (1 * pawn->direction);
+
+    grid_2->x = grid_x - 1;
+    grid_2->y = grid_y + (1 * pawn->direction);
+
+    grid_3->x = grid_x - 2;
+    grid_3->y = grid_y + (2 * pawn->direction);
+
+    grid_4->x = grid_x + 2;
+    grid_4->y = grid_y + (2 * pawn->direction);
+}
+
 void pawn_mouse_click(Pawn* pawn)
 {
     if (pawn->is_hover)
     {
-        pawn_deselect_all();
-        pawn->is_selected = true;
-        game_state->selected_pawn_id = pawn->id;
+        if (pawn->is_selected)
+        {
+            pawn_deselect_all();
+        }
+        else
+        {
+            pawn_deselect_all();
+            pawn->is_selected = true;
+            game_state->selected_pawn_id = pawn->id;
+
+            Grid grid1 = { 0, 0 };
+            Grid grid2 = { 0, 0 };
+            Grid grid3 = { 0, 0 };
+            Grid grid4 = { 0, 0 };
+
+            pawn_get_moves(pawn, &grid1, &grid2, &grid3, &grid4);
+
+            printf("grid1: %d %d\n", grid1.x, grid1.y);
+            printf("grid2: %d %d\n", grid2.x, grid2.y);
+            printf("grid3: %d %d\n", grid3.x, grid3.y);
+            printf("grid4: %d %d\n", grid4.x, grid4.y);
+        }
     }
 }
 
