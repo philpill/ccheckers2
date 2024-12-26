@@ -99,18 +99,6 @@ void pawn_mouse_click(Pawn* pawn)
             pawn_deselect_all();
             pawn->is_selected = true;
             game_state->selected_pawn_id = pawn->id;
-
-            Grid grid1 = { 0, 0 };
-            Grid grid2 = { 0, 0 };
-            Grid grid3 = { 0, 0 };
-            Grid grid4 = { 0, 0 };
-
-            pawn_get_moves(pawn, &grid1, &grid2, &grid3, &grid4);
-
-            printf("grid1: %d %d\n", grid1.x, grid1.y);
-            printf("grid2: %d %d\n", grid2.x, grid2.y);
-            printf("grid3: %d %d\n", grid3.x, grid3.y);
-            printf("grid4: %d %d\n", grid4.x, grid4.y);
         }
     }
 }
@@ -130,7 +118,6 @@ Pawn* pawn_get_by_id(int id)
         if (game_state->pawns[i].id == id)
         {
             return &(game_state->pawns[i]);
-
         }
     }
 
@@ -139,15 +126,8 @@ Pawn* pawn_get_by_id(int id)
 
 bool pawn_is_at_location(int x, int y)
 {
-    // printf("%d %d\n", x, y);
-
     for (int i = 0; i < game_state->pawn_count; i++)
     {
-        // printf("%d: %d %d\n",
-        //     game_state->pawns[i].id,
-        //     game_state->pawns[i].grid_x,
-        //     game_state->pawns[i].grid_y);
-
         if (x == game_state->pawns[i].grid_x
             && y == game_state->pawns[i].grid_y)
         {
@@ -169,15 +149,7 @@ void pawn_set_y(Pawn* pawn, int y)
 
 void pawn_exec()
 {
-    // for (int i = 0; i < game_state->pawn_count; i++)
-    // {
-    //     if (game_state->pawns[i].is_selected) 
-    //     {
-    //         game_state->pawns[i].is_selected = false;
-    //         game_state->selected_pawn_id = -1;
 
-    //     }
-    // }
 }
 
 void pawn_quit()

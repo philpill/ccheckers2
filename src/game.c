@@ -72,6 +72,26 @@ void game_mouse_event(int x, int y, Uint32 mouse_state)
                 if (is_click)
                 {
                     pawn_mouse_click(&game_state.pawns[i]);
+
+                    if (game_state.selected_pawn_id > -1)
+                    {
+                        Grid grid1 = { 0, 0 };
+                        Grid grid2 = { 0, 0 };
+                        Grid grid3 = { 0, 0 };
+                        Grid grid4 = { 0, 0 };
+
+                        Pawn *pawn = pawn_get_by_id(game_state.selected_pawn_id);
+
+                        pawn_get_moves(pawn, &grid1, &grid2, &grid3, &grid4);
+
+                        printf("grid1: %d %d\n", grid1.x, grid1.y);
+                        printf("grid2: %d %d\n", grid2.x, grid2.y);
+                        printf("grid3: %d %d\n", grid3.x, grid3.y);
+                        printf("grid4: %d %d\n", grid4.x, grid4.y);
+
+                        board_set_movement_tile_grid(0, grid1);
+                        board_set_movement_tile_grid(1, grid2);
+                    }
                 }
             }
         }

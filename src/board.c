@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "board.h"
 #include "game.h"
 
@@ -6,14 +7,14 @@ static Game* game_state;
 
 int board_grid_to_x(int grid)
 {
-    int x = (grid * game_state->grid_size) + game_state->board_offset_x + 1;
+    int x = (grid * game_state->grid_size) + game_state->board_offset_x;
 
     return x;
 }
 
 int board_grid_to_y(int grid)
 {
-    int y = (grid * game_state->grid_size) + game_state->board_offset_y + 1;
+    int y = (grid * game_state->grid_size) + game_state->board_offset_y;
 
     return y;
 }
@@ -79,7 +80,7 @@ void board_init(Game* state)
         game_state->movement_tiles[i].x = 0;
         game_state->movement_tiles[i].y = 0;
         game_state->movement_tiles[i].size = game_state->grid_size;
-        game_state->movement_tiles[i].colour = 0;
+        game_state->movement_tiles[i].colour = 3;
         game_state->movement_tiles[i].is_enabled = false;
     }
 
@@ -118,6 +119,26 @@ void board_mouse_click(int x, int y)
     game_state->active_tile->is_enabled = true;
     game_state->active_tile->x = board_get_snapped_x(x);
     game_state->active_tile->y = board_get_snapped_y(y);
+}
+
+void board_set_movement_tile_grid(int tile_index, Grid grid)
+{
+    int x = board_grid_to_x(grid.x);
+    int y = board_grid_to_y(grid.y);
+
+    game_state->movement_tiles[tile_index].x = x;
+    game_state->movement_tiles[tile_index].y = y;
+    game_state->movement_tiles[tile_index].is_enabled = true;
+}
+
+void board_clear_tile_grids()
+{
+    for (int i = 0;i < 4;i++)
+    {
+        game_state->active_tile[i].x = 0;
+        game_state->active_tile[i].y = 0;
+        game_state->active_tile[i].is_enabled = false;
+    }
 }
 
 void board_quit()
