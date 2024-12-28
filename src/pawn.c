@@ -70,8 +70,10 @@ void pawn_deselect_all()
 
 void pawn_get_moves(Pawn* pawn, Grid* grid_1, Grid* grid_2, Grid* grid_3, Grid* grid_4)
 {
-    int grid_x = board_x_to_grid(pawn->x);
-    int grid_y = board_y_to_grid(pawn->y);
+    int grid_x = board_x_to_grid(pawn->grid_x);
+    int grid_y = board_y_to_grid(pawn->grid_y);
+
+    // printf("5 grid_x: %d, grid_y: %d\n", grid_x, grid_y);
 
     grid_1->x = grid_x + 1;
     grid_1->y = grid_y + (1 * pawn->direction);
@@ -110,6 +112,12 @@ void pawn_mouse_hover(Pawn* pawn, int x, int y)
     pawn->is_hover = dist <= pawn->radius;
 }
 
+bool pawn_mouse_hover_by_grid(Pawn* pawn, int grid_x, int grid_y)
+{
+    pawn->is_hover = pawn->x == grid_x && pawn->y == grid_y;
+    return pawn->is_hover;
+}
+
 Pawn* pawn_get_by_id(int id)
 {
 
@@ -137,14 +145,38 @@ bool pawn_is_at_location(int x, int y)
     return false;
 }
 
-void pawn_set_x(Pawn* pawn, int x)
+bool pawn_is_at_location_grid(int grid_x, int grid_y)
 {
-    pawn->grid_x = x;
+    // printf("\n-------------\n");
+
+    // printf("4 grid_x: %d, grid_y: %d\n", grid_x, grid_y);
+
+    for (int i = 0; i < game_state->pawn_count; i++)
+    {
+        // printf("3 grid_x: %d, grid_y: %d\n", game_state->pawns[i].x, game_state->pawns[i].y);
+
+        if (grid_x == game_state->pawns[i].x
+            && grid_y == game_state->pawns[i].y)
+        {
+            // printf("1 grid_x: %d, grid_y: %d\n", grid_x, grid_y);
+
+            return true;
+        }
+    }
+    return false;
 }
 
-void pawn_set_y(Pawn* pawn, int y)
+void pawn_set_x(Pawn* pawn, int x, int snapped_center_x)
 {
-    pawn->grid_y = y;
+    pawn->grid_x = snapped_center_x;
+    pawn->x = x;
+}
+
+void pawn_set_y(Pawn* pawn, int y, int snapped_center_y)
+{
+    pawn->grid_y = snapped_center_y;
+    pawn->y = y;
+
 }
 
 void pawn_exec()

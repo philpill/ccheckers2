@@ -13,6 +13,7 @@ int board_grid_to_x(int x);
 int board_grid_to_y(int y);
 int board_x_to_grid(int x);
 int board_y_to_grid(int y);
+void board_clear_tile_grids();
 void board_mouse_hover(int x, int y);
 void board_mouse_click(int x, int y);
 void board_set_movement_tile_grid(int tile_index, Grid grid);
