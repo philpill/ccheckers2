@@ -14,7 +14,7 @@ void pawn_deselect_all();
 void pawn_exec();
 void pawn_get_moves(Pawn* pawn, Grid* grid_1, Grid* grid_2, Grid* grid_3, Grid* grid_4);
 void pawn_init(Game *state);
-void pawn_mouse_click(Pawn *pawn);
+int pawn_mouse_click(Pawn *pawn);
 void pawn_mouse_hover(Pawn *pawn, int x, int y);
 void pawn_quit();
 void pawn_set_x(Pawn *pawn, int grid_x, int x);

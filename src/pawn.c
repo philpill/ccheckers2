@@ -88,7 +88,7 @@ void pawn_get_moves(Pawn* pawn, Grid* grid_1, Grid* grid_2, Grid* grid_3, Grid* 
     grid_4->y = grid_y + (2 * pawn->direction);
 }
 
-void pawn_mouse_click(Pawn* pawn)
+int pawn_mouse_click(Pawn* pawn)
 {
     if (pawn->is_hover)
     {
@@ -101,8 +101,10 @@ void pawn_mouse_click(Pawn* pawn)
             pawn_deselect_all();
             pawn->is_selected = true;
             game_state->selected_pawn_id = pawn->id;
+            return pawn->id;
         }
     }
+    return -1;
 }
 
 void pawn_mouse_hover(Pawn* pawn, int x, int y)
@@ -168,12 +170,16 @@ bool pawn_is_at_location_grid(int grid_x, int grid_y)
 
 void pawn_set_x(Pawn* pawn, int x, int snapped_center_x)
 {
+    // printf("x: %d %d\n", x, snapped_center_x);
+
     pawn->grid_x = snapped_center_x;
     pawn->x = x;
 }
 
 void pawn_set_y(Pawn* pawn, int y, int snapped_center_y)
 {
+    // printf("y: %d %d\n", y, snapped_center_y);
+
     pawn->grid_y = snapped_center_y;
     pawn->y = y;
 
