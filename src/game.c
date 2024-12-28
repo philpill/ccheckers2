@@ -75,28 +75,46 @@ void game_mouse_click(int x, int y)
     {
         if (game_state.pawns[i].is_active)
         {
-            board_clear_tile_grids();
             int selected_pawn_id = pawn_mouse_click(&game_state.pawns[i]);
 
             if (selected_pawn_id > -1)
             {
-                Pawn* pawn = pawn_get_by_id(game_state.selected_pawn_id);
+                printf("id: %d\n", selected_pawn_id);
+
+                Pawn* pawn = pawn_get_by_id(selected_pawn_id);
 
                 pawn_get_moves(pawn, &grid1, &grid2, &grid3, &grid4);
 
                 if (!pawn_is_at_location_grid(grid1.x, grid1.y))
                 {
+                    // printf("1 %d, %d\n", grid1.x, grid1.y);
                     board_set_movement_tile_grid(0, grid1);
                 }
 
                 if (!pawn_is_at_location_grid(grid2.x, grid2.y))
                 {
+                    // printf("2 %d, %d\n", grid2.x, grid2.y);
                     board_set_movement_tile_grid(1, grid2);
+                }
+
+                if (pawn_is_at_location_grid(grid1.x, grid1.y)
+                    && !pawn_is_at_location_grid(grid3.x, grid3.y)
+                    && pawn_is_opposition(pawn->colour, grid1.x, grid1.y))
+                {
+                    board_set_movement_tile_grid(2, grid3);
+                }
+
+                if (pawn_is_at_location_grid(grid2.x, grid2.y)
+                    && !pawn_is_at_location_grid(grid4.x, grid4.y)
+                    && pawn_is_opposition(pawn->colour, grid2.x, grid2.y))
+                {
+                    board_set_movement_tile_grid(3, grid4);
                 }
             }
         }
     }
 
+    // move selected piece to clicked grid
     if (game_state.selected_pawn_id > -1)
     {
         // printf("id: %d\n", game_state.selected_pawn_id);
@@ -108,9 +126,16 @@ void game_mouse_click(int x, int y)
         bool is_unoccupied = !pawn_is_at_location_grid(grid_x, grid_y);
 
         bool is_valid_move = (grid_x == grid1.x && grid_y == grid1.y)
-            || (grid_x == grid2.x && grid_y == grid2.y)
-            || (grid_x == grid3.x && grid_y == grid3.y)
-            || (grid_x == grid4.x && grid_y == grid4.y);
+            || (grid_x == grid2.x && grid_y == grid2.y);
+
+        bool is_valid_capture = ((grid_x == grid3.x && grid_y == grid3.y 
+                && pawn_is_at_location_grid(grid1.x, grid1.y)
+                && !pawn_is_at_location_grid(grid3.x, grid3.y)
+                && pawn_is_opposition(pawn->colour, grid1.x, grid1.y))
+            || (grid_x == grid4.x && grid_y == grid4.y 
+                && pawn_is_at_location_grid(grid2.x, grid2.y)
+                && !pawn_is_at_location_grid(grid4.x, grid4.y)
+                && pawn_is_opposition(pawn->colour, grid2.x, grid2.y)));
 
         // printf("\n2---------------\n");
         // printf("3 grid_x: %d, grid_y: %d\n", grid_x, grid_y);
@@ -122,7 +147,7 @@ void game_mouse_click(int x, int y)
 
         if (pawn != NULL
             && is_unoccupied
-            && is_valid_move)
+            && (is_valid_move || is_valid_capture))
         {
             // printf("2 grid_x: %d, grid_y: %d\n", grid_x, grid_y);
 
@@ -131,9 +156,19 @@ void game_mouse_click(int x, int y)
 
             pawn_set_x(pawn, grid_x, snapped_center_x);
             pawn_set_y(pawn, grid_y, snapped_center_y);
+
+            if (is_valid_capture)
+            {
+                // capture piece
+            }
+
             pawn_deselect_all();
-            board_clear_tile_grids();
         }
+    }
+
+    if (game_state.selected_pawn_id < 0)
+    {
+        board_clear_tile_grids();
     }
 }
 

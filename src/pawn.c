@@ -81,10 +81,10 @@ void pawn_get_moves(Pawn* pawn, Grid* grid_1, Grid* grid_2, Grid* grid_3, Grid* 
     grid_2->x = grid_x - 1;
     grid_2->y = grid_y + (1 * pawn->direction);
 
-    grid_3->x = grid_x - 2;
+    grid_3->x = grid_x + 2;
     grid_3->y = grid_y + (2 * pawn->direction);
 
-    grid_4->x = grid_x + 2;
+    grid_4->x = grid_x - 2;
     grid_4->y = grid_y + (2 * pawn->direction);
 }
 
@@ -134,12 +134,12 @@ Pawn* pawn_get_by_id(int id)
     return NULL;
 }
 
-bool pawn_is_at_location(int x, int y)
+bool pawn_is_at_grid(int grid_x, int grid_y)
 {
     for (int i = 0; i < game_state->pawn_count; i++)
     {
-        if (x == game_state->pawns[i].grid_x
-            && y == game_state->pawns[i].grid_y)
+        if (grid_x == game_state->pawns[i].x
+            && grid_y == game_state->pawns[i].y)
         {
             return true;
         }
@@ -183,6 +183,21 @@ void pawn_set_y(Pawn* pawn, int y, int snapped_center_y)
     pawn->grid_y = snapped_center_y;
     pawn->y = y;
 
+}
+
+bool pawn_is_opposition(int colour, int grid_x, int grid_y)
+{
+    for (int i = 0; i < game_state->pawn_count; i++)
+    {
+        if (grid_x == game_state->pawns[i].x
+            && grid_y == game_state->pawns[i].y
+            && colour != game_state->pawns[i].colour)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void pawn_exec()

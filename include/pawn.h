@@ -5,8 +5,9 @@
 #include <SDL.h>
 #include "game.h"
 
-bool pawn_is_at_location(int x, int y);
+bool pawn_is_at_grid(int grid_x, int grid_y);
 bool pawn_is_at_location_grid(int grid_x, int grid_y);
+bool pawn_is_opposition(int colour, int grid_x, int grid_y);
 bool pawn_mouse_hover_by_grid(Pawn* pawn, int grid_x, int grid_y);
 Pawn *pawn_get_all();
 Pawn* pawn_get_by_id(int id);

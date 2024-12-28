@@ -123,8 +123,6 @@ void board_set_movement_tile_grid(int tile_index, Grid grid)
     int x = board_grid_to_x(grid.x);
     int y = board_grid_to_y(grid.y);
 
-    // printf("grid: %d %d\n", grid.x, grid.y);
-
     game_state->movement_tiles[tile_index].x = x;
     game_state->movement_tiles[tile_index].y = y;
     game_state->movement_tiles[tile_index].is_enabled
