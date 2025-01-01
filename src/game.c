@@ -13,6 +13,7 @@ void game_init()
     game_state.id = 1;
     game_state.board_offset_x = 10;
     game_state.board_offset_y = 10;
+    game_state.current_colour = 0;
     game_state.selected_pawn_id = -1;
     game_state.pawn_count = 24;
     game_state.is_quit = false;
@@ -49,7 +50,8 @@ void game_mouse_hover(int x, int y)
 
     for (int i = 0; i < game_state.pawn_count; i++)
     {
-        if (game_state.pawns[i].is_active)
+        if (game_state.pawns[i].is_active
+            && game_state.pawns[i].colour == game_state.current_colour)
         {
             pawn_mouse_hover_by_grid(&game_state.pawns[i], grid_x, grid_y);
         }
@@ -75,7 +77,8 @@ void game_mouse_click(int x, int y)
 
     for (int i = 0; i < game_state.pawn_count; i++)
     {
-        if (game_state.pawns[i].is_active)
+        if (game_state.pawns[i].is_active 
+            && game_state.pawns[i].colour == game_state.current_colour)
         {
             int selected_pawn_id = pawn_mouse_click(&game_state.pawns[i]);
 
@@ -152,6 +155,9 @@ void game_mouse_click(int x, int y)
             {
                 // capture piece
             }
+
+            // switch active player
+            game_state.current_colour = game_state.current_colour == 0 ? 1 : 0;
 
             pawn_deselect_all();
         }

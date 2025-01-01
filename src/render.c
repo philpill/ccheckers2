@@ -72,6 +72,29 @@ void render_piece(Pawn* pawn)
     }
 }
 
+void render_ui()
+{
+    SDL_Rect fill_rect = {
+        game_state->board_bound_x + 11,
+        game_state->board_offset_y + 1,
+        game_state->grid_size - 2,
+        game_state->grid_size - 2
+    };
+
+    SDL_Rect outline_rect = {
+        game_state->board_bound_x + 10,
+        game_state->board_offset_y,
+        game_state->grid_size,
+        game_state->grid_size
+    };
+
+    set_render_colour(5);
+    SDL_RenderFillRect(renderer, &outline_rect);
+
+    set_render_colour(game_state->current_colour);
+    SDL_RenderFillRect(renderer, &fill_rect);
+}
+
 void render_tile(Tile* tile)
 {
     if (tile->is_enabled)
@@ -199,6 +222,7 @@ void render_exec(Game* state)
         render_board();
         render_tiles();
         render_pieces();
+        render_ui();
         SDL_RenderPresent(renderer);
     }
 }

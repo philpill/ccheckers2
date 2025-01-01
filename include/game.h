@@ -35,6 +35,7 @@ typedef struct {
     int board_offset_y;
     int board_bound_x;
     int board_bound_y;
+    int current_colour;
     int selected_pawn_id;
     int pawn_count;
     bool is_quit;
