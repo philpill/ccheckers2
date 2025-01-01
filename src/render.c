@@ -50,6 +50,8 @@ static void set_render_colour(int index)
 
 void render_piece(Pawn* pawn)
 {
+    if (!pawn->is_active) { return; }
+
     if (pawn->is_selected)
     {
         set_render_colour(3);

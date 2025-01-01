@@ -84,7 +84,7 @@ void game_mouse_click(int x, int y)
 
             if (selected_pawn_id > -1)
             {
-                printf("id: %d\n", selected_pawn_id);
+                // printf("id: %d\n", selected_pawn_id);
 
                 Pawn* pawn = pawn_get_by_id(selected_pawn_id);
 
@@ -143,18 +143,16 @@ void game_mouse_click(int x, int y)
             && is_unoccupied
             && (is_valid_move || is_valid_capture))
         {
-            // printf("2 grid_x: %d, grid_y: %d\n", grid_x, grid_y);
+            if (is_valid_capture)
+            {
+                pawn_capture_move(pawn, &selected_grid);
+            }
 
             int snapped_center_x = board_get_snapped_center_x(x);
             int snapped_center_y = board_get_snapped_center_y(y);
 
             pawn_set_x(pawn, grid_x, snapped_center_x);
             pawn_set_y(pawn, grid_y, snapped_center_y);
-
-            if (is_valid_capture)
-            {
-                // capture piece
-            }
 
             // switch active player
             game_state.current_colour = game_state.current_colour == 0 ? 1 : 0;

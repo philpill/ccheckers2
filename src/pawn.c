@@ -149,19 +149,14 @@ bool pawn_is_at_location_grid(Grid* grid)
 
 void pawn_set_x(Pawn* pawn, int x, int snapped_center_x)
 {
-    // printf("x: %d %d\n", x, snapped_center_x);
-
     pawn->grid_x = snapped_center_x;
     pawn->x = x;
 }
 
 void pawn_set_y(Pawn* pawn, int y, int snapped_center_y)
 {
-    // printf("y: %d %d\n", y, snapped_center_y);
-
     pawn->grid_y = snapped_center_y;
     pawn->y = y;
-
 }
 
 bool pawn_is_opposition(int colour, Grid* grid)
@@ -177,6 +172,25 @@ bool pawn_is_opposition(int colour, Grid* grid)
     }
 
     return false;
+}
+
+void pawn_capture_move(Pawn* pawn, Grid* grid)
+{
+    int capture_x = grid->x > pawn->x ? pawn->x + 1 : pawn->x - 1; // 2
+    int capture_y = pawn->y + (1 * pawn->direction); // 6
+
+    for (int i = 0; i < game_state->pawn_count; i++)
+    {
+        if (capture_x == game_state->pawns[i].x
+            && capture_y == game_state->pawns[i].y)
+        {
+            game_state->pawns[i].is_active = false;
+            game_state->pawns[i].x = -1;
+            game_state->pawns[i].y = -1;
+            game_state->pawns[i].grid_x = -1;
+            game_state->pawns[i].grid_y = -1;
+        }
+    }
 }
 
 bool pawn_is_capture_available(int pawn_colour, Grid* grid1, Grid* grid2)
