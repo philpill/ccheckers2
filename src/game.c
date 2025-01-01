@@ -61,6 +61,8 @@ void game_mouse_click(int x, int y)
     int grid_x = board_x_to_grid(x);
     int grid_y = board_x_to_grid(y);
 
+    Grid grid = { grid_x, grid_y };
+
     int snapped_x = board_get_snapped_x(x);
     int snapped_y = board_get_snapped_y(y);
 
@@ -85,28 +87,22 @@ void game_mouse_click(int x, int y)
 
                 pawn_get_moves(pawn, &grid1, &grid2, &grid3, &grid4);
 
-                if (!pawn_is_at_location_grid(grid1.x, grid1.y))
+                if (!pawn_is_at_location_grid(&grid1))
                 {
-                    // printf("1 %d, %d\n", grid1.x, grid1.y);
                     board_set_movement_tile_grid(0, grid1);
                 }
 
-                if (!pawn_is_at_location_grid(grid2.x, grid2.y))
+                if (!pawn_is_at_location_grid(&grid2))
                 {
-                    // printf("2 %d, %d\n", grid2.x, grid2.y);
                     board_set_movement_tile_grid(1, grid2);
                 }
 
-                if (pawn_is_at_location_grid(grid1.x, grid1.y)
-                    && !pawn_is_at_location_grid(grid3.x, grid3.y)
-                    && pawn_is_opposition(pawn->colour, grid1.x, grid1.y))
+                if (pawn_is_capture_available(pawn->colour, &grid1, &grid3))
                 {
                     board_set_movement_tile_grid(2, grid3);
                 }
 
-                if (pawn_is_at_location_grid(grid2.x, grid2.y)
-                    && !pawn_is_at_location_grid(grid4.x, grid4.y)
-                    && pawn_is_opposition(pawn->colour, grid2.x, grid2.y))
+                if (pawn_is_capture_available(pawn->colour, &grid2, &grid4))
                 {
                     board_set_movement_tile_grid(3, grid4);
                 }
@@ -123,19 +119,14 @@ void game_mouse_click(int x, int y)
 
         pawn_get_moves(pawn, &grid1, &grid2, &grid3, &grid4);
 
-        bool is_unoccupied = !pawn_is_at_location_grid(grid_x, grid_y);
+        bool is_unoccupied = !pawn_is_at_location_grid(&grid);
 
         bool is_valid_move = (grid_x == grid1.x && grid_y == grid1.y)
             || (grid_x == grid2.x && grid_y == grid2.y);
 
-        bool is_valid_capture = ((grid_x == grid3.x && grid_y == grid3.y 
-                && pawn_is_at_location_grid(grid1.x, grid1.y)
-                && !pawn_is_at_location_grid(grid3.x, grid3.y)
-                && pawn_is_opposition(pawn->colour, grid1.x, grid1.y))
-            || (grid_x == grid4.x && grid_y == grid4.y 
-                && pawn_is_at_location_grid(grid2.x, grid2.y)
-                && !pawn_is_at_location_grid(grid4.x, grid4.y)
-                && pawn_is_opposition(pawn->colour, grid2.x, grid2.y)));
+        bool is_valid_capture 
+            = pawn_is_valid_capture(pawn->colour, &grid, &grid1, &grid3)
+            || pawn_is_valid_capture(pawn->colour, &grid, &grid2, &grid4);
 
         // printf("\n2---------------\n");
         // printf("3 grid_x: %d, grid_y: %d\n", grid_x, grid_y);

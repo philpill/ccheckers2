@@ -134,34 +134,13 @@ Pawn* pawn_get_by_id(int id)
     return NULL;
 }
 
-bool pawn_is_at_grid(int grid_x, int grid_y)
+bool pawn_is_at_location_grid(Grid *grid)
 {
     for (int i = 0; i < game_state->pawn_count; i++)
     {
-        if (grid_x == game_state->pawns[i].x
-            && grid_y == game_state->pawns[i].y)
+        if (grid->x == game_state->pawns[i].x
+            && grid->y == game_state->pawns[i].y)
         {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool pawn_is_at_location_grid(int grid_x, int grid_y)
-{
-    // printf("\n-------------\n");
-
-    // printf("4 grid_x: %d, grid_y: %d\n", grid_x, grid_y);
-
-    for (int i = 0; i < game_state->pawn_count; i++)
-    {
-        // printf("3 grid_x: %d, grid_y: %d\n", game_state->pawns[i].x, game_state->pawns[i].y);
-
-        if (grid_x == game_state->pawns[i].x
-            && grid_y == game_state->pawns[i].y)
-        {
-            // printf("1 grid_x: %d, grid_y: %d\n", grid_x, grid_y);
-
             return true;
         }
     }
@@ -185,12 +164,12 @@ void pawn_set_y(Pawn* pawn, int y, int snapped_center_y)
 
 }
 
-bool pawn_is_opposition(int colour, int grid_x, int grid_y)
+bool pawn_is_opposition(int colour, Grid *grid)
 {
     for (int i = 0; i < game_state->pawn_count; i++)
     {
-        if (grid_x == game_state->pawns[i].x
-            && grid_y == game_state->pawns[i].y
+        if (grid->x == game_state->pawns[i].x
+            && grid->y == game_state->pawns[i].y
             && colour != game_state->pawns[i].colour)
         {
             return true;
@@ -198,6 +177,21 @@ bool pawn_is_opposition(int colour, int grid_x, int grid_y)
     }
 
     return false;
+}
+
+bool pawn_is_capture_available(int pawn_colour, Grid *grid1, Grid *grid2)
+{
+    return pawn_is_at_location_grid(grid1)
+        && !pawn_is_at_location_grid(grid2)
+        && pawn_is_opposition(pawn_colour, grid1);
+}
+
+bool pawn_is_valid_capture(int pawn_colour, Grid *selected_grid, Grid *grid1, Grid *grid2)
+{
+    return selected_grid->x == grid2->x && selected_grid->y == grid2->y 
+        && pawn_is_at_location_grid(grid1)
+        && !pawn_is_at_location_grid(grid2)
+        && pawn_is_opposition(pawn_colour, grid1);
 }
 
 void pawn_exec()
