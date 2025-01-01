@@ -134,7 +134,7 @@ Pawn* pawn_get_by_id(int id)
     return NULL;
 }
 
-bool pawn_is_at_location_grid(Grid *grid)
+bool pawn_is_at_location_grid(Grid* grid)
 {
     for (int i = 0; i < game_state->pawn_count; i++)
     {
@@ -164,7 +164,7 @@ void pawn_set_y(Pawn* pawn, int y, int snapped_center_y)
 
 }
 
-bool pawn_is_opposition(int colour, Grid *grid)
+bool pawn_is_opposition(int colour, Grid* grid)
 {
     for (int i = 0; i < game_state->pawn_count; i++)
     {
@@ -179,19 +179,24 @@ bool pawn_is_opposition(int colour, Grid *grid)
     return false;
 }
 
-bool pawn_is_capture_available(int pawn_colour, Grid *grid1, Grid *grid2)
+bool pawn_is_capture_available(int pawn_colour, Grid* grid1, Grid* grid2)
 {
     return pawn_is_at_location_grid(grid1)
         && !pawn_is_at_location_grid(grid2)
         && pawn_is_opposition(pawn_colour, grid1);
 }
 
-bool pawn_is_valid_capture(int pawn_colour, Grid *selected_grid, Grid *grid1, Grid *grid2)
+bool pawn_is_valid_capture(int pawn_colour, Grid* selected_grid, Grid* grid1, Grid* grid2)
 {
-    return selected_grid->x == grid2->x && selected_grid->y == grid2->y 
+    return selected_grid->x == grid2->x && selected_grid->y == grid2->y
         && pawn_is_at_location_grid(grid1)
         && !pawn_is_at_location_grid(grid2)
         && pawn_is_opposition(pawn_colour, grid1);
+}
+
+bool pawn_is_valid_move(Grid* selected_grid, Grid* grid1)
+{
+    return selected_grid->x == grid1->x && selected_grid->y == grid1->y;
 }
 
 void pawn_exec()

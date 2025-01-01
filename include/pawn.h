@@ -9,6 +9,7 @@ bool pawn_is_at_location_grid(Grid *grid);
 bool pawn_is_capture_available(int pawn_colour, Grid *grid1, Grid *grid2);
 bool pawn_is_opposition(int colour, Grid *grid);
 bool pawn_is_valid_capture(int pawn_colour, Grid *selected_grid, Grid *grid1, Grid *grid2);
+bool pawn_is_valid_move(Grid* selected_grid, Grid* grid1);
 bool pawn_mouse_hover_by_grid(Pawn* pawn, int grid_x, int grid_y);
 int pawn_mouse_click(Pawn *pawn);
 Pawn *pawn_get_all();

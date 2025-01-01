@@ -61,7 +61,7 @@ void game_mouse_click(int x, int y)
     int grid_x = board_x_to_grid(x);
     int grid_y = board_x_to_grid(y);
 
-    Grid grid = { grid_x, grid_y };
+    Grid selected_grid = { grid_x, grid_y };
 
     int snapped_x = board_get_snapped_x(x);
     int snapped_y = board_get_snapped_y(y);
@@ -119,14 +119,14 @@ void game_mouse_click(int x, int y)
 
         pawn_get_moves(pawn, &grid1, &grid2, &grid3, &grid4);
 
-        bool is_unoccupied = !pawn_is_at_location_grid(&grid);
+        bool is_unoccupied = !pawn_is_at_location_grid(&selected_grid);
 
-        bool is_valid_move = (grid_x == grid1.x && grid_y == grid1.y)
-            || (grid_x == grid2.x && grid_y == grid2.y);
+        bool is_valid_move = pawn_is_valid_move(&selected_grid, &grid1)
+            || pawn_is_valid_move(&selected_grid, &grid2);
 
         bool is_valid_capture 
-            = pawn_is_valid_capture(pawn->colour, &grid, &grid1, &grid3)
-            || pawn_is_valid_capture(pawn->colour, &grid, &grid2, &grid4);
+            = pawn_is_valid_capture(pawn->colour, &selected_grid, &grid1, &grid3)
+            || pawn_is_valid_capture(pawn->colour, &selected_grid, &grid2, &grid4);
 
         // printf("\n2---------------\n");
         // printf("3 grid_x: %d, grid_y: %d\n", grid_x, grid_y);
