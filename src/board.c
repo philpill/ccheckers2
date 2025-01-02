@@ -74,7 +74,7 @@ void board_init(Game* state)
 
     int id = 0;
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 8; i++)
     {
         game_state->movement_tiles[i].id = id++;
         game_state->movement_tiles[i].x = board_get_snapped_x(0);
@@ -134,7 +134,7 @@ void board_set_movement_tile_grid(int tile_index, Grid grid)
 
 void board_clear_tile_grids()
 {
-    for (int i = 0;i < 4;i++)
+    for (int i = 0;i < 8;i++)
     {
         game_state->movement_tiles[i].x = board_get_snapped_x(0);
         game_state->movement_tiles[i].y = board_get_snapped_y(0);

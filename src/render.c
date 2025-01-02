@@ -126,7 +126,7 @@ void render_tiles()
 {
     render_tile(game_state->active_tile);
     render_tile(game_state->cursor_tile);
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 8; i++)
     {
         render_tile(&game_state->movement_tiles[i]);
     }

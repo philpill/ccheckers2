@@ -17,7 +17,8 @@ Pawn* pawn_get_by_id(int id);
 void pawn_capture_move(Pawn *pawn, Grid *grid);
 void pawn_deselect_all();
 void pawn_exec();
-void pawn_get_moves(Pawn* pawn, Grid* grid_1, Grid* grid_2, Grid* grid_3, Grid* grid_4);
+void pawn_get_moves(Pawn* pawn, Grid* grid_1, Grid* grid_2, Grid* grid_3, Grid* grid_4, 
+    Grid* grid_5, Grid* grid_6, Grid* grid_7, Grid* grid_8);
 void pawn_init(Game *state);
 void pawn_mouse_hover(Pawn *pawn, int x, int y);
 void pawn_quit();

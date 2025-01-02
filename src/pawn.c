@@ -27,7 +27,7 @@ void pawn_init(Game* state)
             game_state->pawns[id].y = i;
             game_state->pawns[id].radius = 0;
             game_state->pawns[id].direction = 1;
-            game_state->pawns[id].is_king = false;
+            game_state->pawns[id].is_king = true;
             game_state->pawns[id].is_hover = false;
             game_state->pawns[id].is_selected = false;
             game_state->pawns[id].is_active = true;
@@ -48,7 +48,7 @@ void pawn_init(Game* state)
             game_state->pawns[id].y = i;
             game_state->pawns[id].radius = 0;
             game_state->pawns[id].direction = -1;
-            game_state->pawns[id].is_king = false;
+            game_state->pawns[id].is_king = true;
             game_state->pawns[id].is_hover = false;
             game_state->pawns[id].is_selected = false;
             game_state->pawns[id].is_active = true;
@@ -68,7 +68,8 @@ void pawn_deselect_all()
     }
 }
 
-void pawn_get_moves(Pawn* pawn, Grid* grid_1, Grid* grid_2, Grid* grid_3, Grid* grid_4)
+void pawn_get_moves(Pawn* pawn, Grid* grid_1, Grid* grid_2, Grid* grid_3, Grid* grid_4,
+    Grid* grid_5, Grid* grid_6, Grid* grid_7, Grid* grid_8)
 {
     int grid_x = board_x_to_grid(pawn->grid_x);
     int grid_y = board_y_to_grid(pawn->grid_y);
@@ -86,6 +87,21 @@ void pawn_get_moves(Pawn* pawn, Grid* grid_1, Grid* grid_2, Grid* grid_3, Grid* 
 
     grid_4->x = grid_x - 2;
     grid_4->y = grid_y + (2 * pawn->direction);
+
+    if (pawn->is_king)
+    {
+        grid_5->x = grid_x + 1;
+        grid_5->y = grid_y - (1 * pawn->direction);
+
+        grid_6->x = grid_x - 1;
+        grid_6->y = grid_y - (1 * pawn->direction);
+
+        grid_7->x = grid_x + 2;
+        grid_7->y = grid_y - (2 * pawn->direction);
+
+        grid_8->x = grid_x - 2;
+        grid_8->y = grid_y - (2 * pawn->direction);
+    }
 }
 
 int pawn_mouse_click(Pawn* pawn)
@@ -176,19 +192,58 @@ bool pawn_is_opposition(int colour, Grid* grid)
 
 void pawn_capture_move(Pawn* pawn, Grid* grid)
 {
-    int capture_x = grid->x > pawn->x ? pawn->x + 1 : pawn->x - 1; // 2
-    int capture_y = pawn->y + (1 * pawn->direction); // 6
+    printf("grid_x: %d\n", grid->x); // 3
+    printf("grid_y: %d\n", grid->y); // 5
+
+    printf("pawn_x: %d\n", pawn->x); // 1
+    printf("pawn_y: %d\n", pawn->y); // 3
+
+    if (pawn->is_king)
+    {
+        int king_capture_x = grid->x > pawn->x ? pawn->x + 1 : pawn->x - 1; // 2
+        int king_capture_y = pawn->y - (1 * pawn->direction);
+
+        printf("king_capture_x: %d\n", king_capture_x);
+        printf("king_capture_y: %d\n", king_capture_y);
+
+        for (int j = 0; j < game_state->pawn_count; j++)
+        {
+            if (game_state->pawns[j].is_active
+                && king_capture_x == game_state->pawns[j].x
+                && king_capture_y == game_state->pawns[j].y)
+            {
+                game_state->pawns[j].is_active = false;
+                game_state->pawns[j].x = -1;
+                game_state->pawns[j].y = -1;
+                game_state->pawns[j].grid_x = -1;
+                game_state->pawns[j].grid_y = -1;
+
+                return;
+            }
+        }
+    }
+
+    int capture_x = grid->x > pawn->x ? pawn->x + 1 : pawn->x - 1;
+    int capture_y = pawn->y + (1 * pawn->direction);
 
     for (int i = 0; i < game_state->pawn_count; i++)
     {
-        if (capture_x == game_state->pawns[i].x
+        if (game_state->pawns[i].is_active
+            && capture_x == game_state->pawns[i].x
             && capture_y == game_state->pawns[i].y)
         {
+            printf("pawn_id1: %d\n", pawn->id);
+            printf("pawn_id2: %d\n", game_state->pawns[i].id);
+            printf("capture_x: %d\n", capture_x);
+            printf("capture_y: %d\n", capture_y);
+
             game_state->pawns[i].is_active = false;
             game_state->pawns[i].x = -1;
             game_state->pawns[i].y = -1;
             game_state->pawns[i].grid_x = -1;
             game_state->pawns[i].grid_y = -1;
+
+            return;
         }
     }
 }
