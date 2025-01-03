@@ -27,7 +27,7 @@ void pawn_init(Game* state)
             game_state->pawns[id].y = i;
             game_state->pawns[id].radius = 0;
             game_state->pawns[id].direction = 1;
-            game_state->pawns[id].is_king = true;
+            game_state->pawns[id].is_king = false;
             game_state->pawns[id].is_hover = false;
             game_state->pawns[id].is_selected = false;
             game_state->pawns[id].is_active = true;
@@ -48,7 +48,7 @@ void pawn_init(Game* state)
             game_state->pawns[id].y = i;
             game_state->pawns[id].radius = 0;
             game_state->pawns[id].direction = -1;
-            game_state->pawns[id].is_king = true;
+            game_state->pawns[id].is_king = false;
             game_state->pawns[id].is_hover = false;
             game_state->pawns[id].is_selected = false;
             game_state->pawns[id].is_active = true;
@@ -138,7 +138,6 @@ bool pawn_mouse_hover_by_grid(Pawn* pawn, int grid_x, int grid_y)
 
 Pawn* pawn_get_by_id(int id)
 {
-
     for (int i = 0; i < game_state->pawn_count; i++)
     {
         if (game_state->pawns[i].id == id)
@@ -173,6 +172,12 @@ void pawn_set_y(Pawn* pawn, int y, int snapped_center_y)
 {
     pawn->grid_y = snapped_center_y;
     pawn->y = y;
+
+    if ((pawn->direction > 0 && y == 7)
+        || (pawn->direction < 0 && y == 0))
+    {
+        pawn->is_king = true;
+    }
 }
 
 bool pawn_is_opposition(int colour, Grid* grid)
@@ -192,39 +197,14 @@ bool pawn_is_opposition(int colour, Grid* grid)
 
 void pawn_capture_move(Pawn* pawn, Grid* grid)
 {
-    printf("grid_x: %d\n", grid->x); // 3
-    printf("grid_y: %d\n", grid->y); // 5
+    // printf("grid_x: %d\n", grid->x);
+    // printf("grid_y: %d\n", grid->y);
 
-    printf("pawn_x: %d\n", pawn->x); // 1
-    printf("pawn_y: %d\n", pawn->y); // 3
-
-    if (pawn->is_king)
-    {
-        int king_capture_x = grid->x > pawn->x ? pawn->x + 1 : pawn->x - 1; // 2
-        int king_capture_y = pawn->y - (1 * pawn->direction);
-
-        printf("king_capture_x: %d\n", king_capture_x);
-        printf("king_capture_y: %d\n", king_capture_y);
-
-        for (int j = 0; j < game_state->pawn_count; j++)
-        {
-            if (game_state->pawns[j].is_active
-                && king_capture_x == game_state->pawns[j].x
-                && king_capture_y == game_state->pawns[j].y)
-            {
-                game_state->pawns[j].is_active = false;
-                game_state->pawns[j].x = -1;
-                game_state->pawns[j].y = -1;
-                game_state->pawns[j].grid_x = -1;
-                game_state->pawns[j].grid_y = -1;
-
-                return;
-            }
-        }
-    }
+    // printf("pawn_x: %d\n", pawn->x);
+    // printf("pawn_y: %d\n", pawn->y);
 
     int capture_x = grid->x > pawn->x ? pawn->x + 1 : pawn->x - 1;
-    int capture_y = pawn->y + (1 * pawn->direction);
+    int capture_y = grid->y > pawn->y ? pawn->y + 1 : pawn->y - 1;
 
     for (int i = 0; i < game_state->pawn_count; i++)
     {
@@ -232,10 +212,10 @@ void pawn_capture_move(Pawn* pawn, Grid* grid)
             && capture_x == game_state->pawns[i].x
             && capture_y == game_state->pawns[i].y)
         {
-            printf("pawn_id1: %d\n", pawn->id);
-            printf("pawn_id2: %d\n", game_state->pawns[i].id);
-            printf("capture_x: %d\n", capture_x);
-            printf("capture_y: %d\n", capture_y);
+            // printf("pawn_id1: %d\n", pawn->id);
+            // printf("pawn_id2: %d\n", game_state->pawns[i].id);
+            // printf("capture_x: %d\n", capture_x);
+            // printf("capture_y: %d\n", capture_y);
 
             game_state->pawns[i].is_active = false;
             game_state->pawns[i].x = -1;

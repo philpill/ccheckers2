@@ -1,3 +1,4 @@
+#include <math.h>
 #include <SDL.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -71,6 +72,54 @@ void render_piece(Pawn* pawn)
     if (error < 0)
     {
         printf("error: %s\n", SDL_GetError());
+    }
+
+    if (pawn->is_king)
+    {
+
+        double a = 5.50; // 315;
+        double b = 0.79; // 45;
+        double c = 2.36; // 135;
+        double d = 3.93; // 225;
+
+        set_render_colour(pawn->colour == 0 ? 1 : 0);
+        Grid grid1 =
+        {
+            (pawn->radius * sin(a) + pawn->grid_x),
+            (pawn->radius * cos(a) + pawn->grid_y)
+        };
+
+        Grid grid2 =
+        {
+            (pawn->radius * sin(b) + pawn->grid_x),
+            (pawn->radius * cos(b) + pawn->grid_y)
+        };
+
+        Grid grid3 =
+        {
+            (pawn->radius * sin(c) + pawn->grid_x),
+            (pawn->radius * cos(c) + pawn->grid_y)
+        };
+
+        Grid grid4 =
+        {
+            (pawn->radius * sin(d) + pawn->grid_x),
+            (pawn->radius * cos(d) + pawn->grid_y)
+        };
+
+        if (SDL_RenderDrawLine(renderer,
+            grid1.x, grid1.y,
+            grid3.x, grid3.y) < 0)
+        {
+            printf("error: %s\n", SDL_GetError());
+        }
+
+        if (SDL_RenderDrawLine(renderer,
+            grid2.x, grid2.y,
+            grid4.x, grid4.y) < 0)
+        {
+            printf("error: %s\n", SDL_GetError());
+        }
     }
 }
 
