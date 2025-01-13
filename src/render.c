@@ -76,13 +76,24 @@ void render_piece(Pawn* pawn)
 
     if (pawn->is_king)
     {
-
         double a = 5.50; // 315;
         double b = 0.79; // 45;
         double c = 2.36; // 135;
         double d = 3.93; // 225;
 
-        set_render_colour(pawn->colour == 0 ? 1 : 0);
+        if (pawn->is_selected)
+        {
+            set_render_colour(pawn->colour == 0 ? 1 : 3);
+        }
+        else if (pawn->is_hover)
+        {
+            set_render_colour(pawn->colour == 0 ? 1 : 2);
+        }
+        else
+        {
+            set_render_colour(pawn->colour == 0 ? 1 : 0);
+        }
+
         Grid grid1 =
         {
             (pawn->radius * sin(a) + pawn->grid_x),

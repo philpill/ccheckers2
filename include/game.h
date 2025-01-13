@@ -38,17 +38,27 @@ typedef struct {
     int current_colour;
     int selected_pawn_id;
     int pawn_count;
+    int* grid_ratings;
     bool is_quit;
-    Pawn *pawns;
-    Tile *movement_tiles;
-    Tile *cursor_tile;
-    Tile *active_tile;
+    bool is_player1_bot;
+    bool is_player2_bot;
+    Pawn* pawns;
+    Tile* movement_tiles;
+    Tile* cursor_tile;
+    Tile* active_tile;
 } Game;
 
 typedef struct {
     int x;
     int y;
 } Grid;
+
+typedef struct {
+    int rating_id;
+    int pawn_id;
+    int grid_index;
+    int rating;
+} MaxRating;
 
 void game_init();
 Game* game_get_state();

@@ -5,6 +5,7 @@
 #include "pawn.h"
 #include "board.h"
 #include "render.h"
+#include "bot.h"
 
 static Game game_state;
 
@@ -16,10 +17,13 @@ void game_init()
     game_state.current_colour = 0;
     game_state.selected_pawn_id = -1;
     game_state.pawn_count = 24;
+    game_state.is_player1_bot = false;
+    game_state.is_player2_bot = false;
     game_state.is_quit = false;
     game_state.pawns = malloc(24 * sizeof(Pawn));
 
     game_state.movement_tiles = malloc(8 * sizeof(Tile));
+    game_state.grid_ratings = malloc(8 * sizeof(int));
     game_state.active_tile = malloc(sizeof(Tile));
     game_state.cursor_tile = malloc(sizeof(Tile));
 }
@@ -35,6 +39,13 @@ void game_quit()
     free(game_state.movement_tiles);
     free(game_state.active_tile);
     free(game_state.cursor_tile);
+    free(game_state.grid_ratings);
+}
+
+bool game_is_current_colour_bot(int current_colour)
+{
+    return (current_colour == -1 && game_state.is_player1_bot)
+        || (current_colour == 1 && game_state.is_player2_bot);
 }
 
 void game_mouse_hover(int x, int y)
@@ -67,73 +78,74 @@ void game_mouse_click(int x, int y)
     int snapped_x = board_get_snapped_x(x);
     int snapped_y = board_get_snapped_y(y);
 
-    Grid grid1 = { -1, -1 };
-    Grid grid2 = { -1, -1 };
-    Grid grid3 = { -1, -1 };
-    Grid grid4 = { -1, -1 };
-    Grid grid5 = { -1, -1 };
-    Grid grid6 = { -1, -1 };
-    Grid grid7 = { -1, -1 };
-    Grid grid8 = { -1, -1 };
+    Grid grids[8];
 
     board_mouse_click(snapped_x, snapped_y);
 
     for (int i = 0; i < game_state.pawn_count; i++)
     {
         if (game_state.pawns[i].is_active
-            && game_state.pawns[i].colour == game_state.current_colour)
+            && game_state.pawns[i].colour == game_state.current_colour
+            && !game_is_current_colour_bot(game_state.current_colour))
         {
             int selected_pawn_id = pawn_mouse_click(&game_state.pawns[i]);
 
             if (selected_pawn_id > -1)
             {
-                // printf("id: %d\n", selected_pawn_id);
-
                 Pawn* pawn = pawn_get_by_id(selected_pawn_id);
 
-                pawn_get_moves(pawn, &grid1, &grid2, &grid3, &grid4,
-                    &grid5, &grid6, &grid7, &grid8);
+                pawn_get_moves(pawn, grids);
 
-                if (!pawn_is_at_location_grid(&grid1))
+                Grid current_grid = { game_state.pawns[i].x, game_state.pawns[i].y };
+
+                if (!pawn_is_at_location_grid(&grids[0]))
                 {
-                    board_set_movement_tile_grid(0, grid1);
+                    bot_get_grid_rating(0, game_state.current_colour, current_grid, grids[0]);
+                    board_set_movement_tile_grid(0, grids[0]);
                 }
 
-                if (!pawn_is_at_location_grid(&grid2))
+                if (!pawn_is_at_location_grid(&grids[1]))
                 {
-                    board_set_movement_tile_grid(1, grid2);
+                    bot_get_grid_rating(1, game_state.current_colour, current_grid, grids[1]);
+                    board_set_movement_tile_grid(1, grids[1]);
                 }
 
-                if (pawn_is_capture_available(pawn->colour, &grid1, &grid3))
+                if (pawn_is_capture_available(pawn->colour, &grids[0], &grids[2]))
                 {
-                    board_set_movement_tile_grid(2, grid3);
+                    bot_get_grid_rating(2, game_state.current_colour, current_grid, grids[2]);
+                    board_set_movement_tile_grid(2, grids[2]);
                 }
 
-                if (pawn_is_capture_available(pawn->colour, &grid2, &grid4))
+                if (pawn_is_capture_available(pawn->colour, &grids[1], &grids[3]))
                 {
-                    board_set_movement_tile_grid(3, grid4);
+                    bot_get_grid_rating(3, game_state.current_colour, current_grid, grids[3]);
+                    board_set_movement_tile_grid(3, grids[3]);
                 }
 
                 if (pawn->is_king)
                 {
-                    if (!pawn_is_at_location_grid(&grid5))
+                    if (!pawn_is_at_location_grid(&grids[4]))
                     {
-                        board_set_movement_tile_grid(4, grid5);
+                        bot_get_grid_rating(4, game_state.current_colour, current_grid, grids[4]);
+                        board_set_movement_tile_grid(4, grids[4]);
                     }
 
-                    if (!pawn_is_at_location_grid(&grid6))
+                    if (!pawn_is_at_location_grid(&grids[5]))
                     {
-                        board_set_movement_tile_grid(5, grid6);
+                        bot_get_grid_rating(5, game_state.current_colour, current_grid, grids[5]);
+                        board_set_movement_tile_grid(5, grids[5]);
                     }
 
-                    if (pawn_is_capture_available(pawn->colour, &grid5, &grid7))
+                    if (pawn_is_capture_available(pawn->colour, &grids[4], &grids[6]))
                     {
-                        board_set_movement_tile_grid(6, grid7);
+                        bot_get_grid_rating(6, game_state.current_colour, current_grid, grids[6]);
+                        board_set_movement_tile_grid(6, grids[6]);
                     }
 
-                    if (pawn_is_capture_available(pawn->colour, &grid6, &grid8))
+                    if (pawn_is_capture_available(pawn->colour, &grids[5], &grids[7]))
                     {
-                        board_set_movement_tile_grid(7, grid8);
+                        bot_get_grid_rating(7, game_state.current_colour, current_grid, grids[7]);
+                        board_set_movement_tile_grid(7, grids[7]);
                     }
                 }
             }
@@ -145,21 +157,20 @@ void game_mouse_click(int x, int y)
     {
         Pawn* pawn = pawn_get_by_id(game_state.selected_pawn_id);
 
-        pawn_get_moves(pawn, &grid1, &grid2, &grid3, &grid4,
-            &grid5, &grid6, &grid7, &grid8);
+        pawn_get_moves(pawn, grids);
 
         bool is_unoccupied = !pawn_is_at_location_grid(&selected_grid);
 
-        bool is_valid_move = pawn_is_valid_move(&selected_grid, &grid1)
-            || pawn_is_valid_move(&selected_grid, &grid2)
-            || (pawn->is_king && pawn_is_valid_move(&selected_grid, &grid5))
-            || (pawn->is_king && pawn_is_valid_move(&selected_grid, &grid6));
+        bool is_valid_move = pawn_is_valid_move(&selected_grid, &grids[0])
+            || pawn_is_valid_move(&selected_grid, &grids[1])
+            || (pawn->is_king && pawn_is_valid_move(&selected_grid, &grids[4]))
+            || (pawn->is_king && pawn_is_valid_move(&selected_grid, &grids[5]));
 
         bool is_valid_capture
-            = pawn_is_valid_capture(pawn->colour, &selected_grid, &grid1, &grid3)
-            || pawn_is_valid_capture(pawn->colour, &selected_grid, &grid2, &grid4)
-            || (pawn->is_king && pawn_is_valid_capture(pawn->colour, &selected_grid, &grid5, &grid7))
-            || (pawn->is_king && pawn_is_valid_capture(pawn->colour, &selected_grid, &grid6, &grid8));
+            = pawn_is_valid_capture(pawn->colour, &selected_grid, &grids[0], &grids[2])
+            || pawn_is_valid_capture(pawn->colour, &selected_grid, &grids[1], &grids[3])
+            || (pawn->is_king && pawn_is_valid_capture(pawn->colour, &selected_grid, &grids[4], &grids[6]))
+            || (pawn->is_king && pawn_is_valid_capture(pawn->colour, &selected_grid, &grids[5], &grids[7]));
 
         // printf("\n2---------------\n");
         // printf("3 grid_x: %d, grid_y: %d\n", grid_x, grid_y);
@@ -194,6 +205,7 @@ void game_mouse_click(int x, int y)
     if (game_state.selected_pawn_id < 0)
     {
         board_clear_tile_grids();
+        bot_clear_grid_ratings();
     }
 }
 

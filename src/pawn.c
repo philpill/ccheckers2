@@ -68,39 +68,38 @@ void pawn_deselect_all()
     }
 }
 
-void pawn_get_moves(Pawn* pawn, Grid* grid_1, Grid* grid_2, Grid* grid_3, Grid* grid_4,
-    Grid* grid_5, Grid* grid_6, Grid* grid_7, Grid* grid_8)
+void pawn_get_moves(Pawn* pawn, Grid* grids)
 {
     int grid_x = board_x_to_grid(pawn->grid_x);
     int grid_y = board_y_to_grid(pawn->grid_y);
 
     // printf("5 grid_x: %d, grid_y: %d\n", grid_x, grid_y);
 
-    grid_1->x = grid_x + 1;
-    grid_1->y = grid_y + (1 * pawn->direction);
+    (grids[0]).x = grid_x + 1;
+    (grids[0]).y = grid_y + (1 * pawn->direction);
 
-    grid_2->x = grid_x - 1;
-    grid_2->y = grid_y + (1 * pawn->direction);
+    (grids[1]).x = grid_x - 1;
+    (grids[1]).y = grid_y + (1 * pawn->direction);
 
-    grid_3->x = grid_x + 2;
-    grid_3->y = grid_y + (2 * pawn->direction);
+    (grids[2]).x = grid_x + 2;
+    (grids[2]).y = grid_y + (2 * pawn->direction);
 
-    grid_4->x = grid_x - 2;
-    grid_4->y = grid_y + (2 * pawn->direction);
+    (grids[3]).x = grid_x - 2;
+    (grids[3]).y = grid_y + (2 * pawn->direction);
 
     if (pawn->is_king)
     {
-        grid_5->x = grid_x + 1;
-        grid_5->y = grid_y - (1 * pawn->direction);
+        (grids[4]).x = grid_x + 1;
+        (grids[4]).y = grid_y - (1 * pawn->direction);
 
-        grid_6->x = grid_x - 1;
-        grid_6->y = grid_y - (1 * pawn->direction);
+        (grids[5]).x = grid_x - 1;
+        (grids[5]).y = grid_y - (1 * pawn->direction);
 
-        grid_7->x = grid_x + 2;
-        grid_7->y = grid_y - (2 * pawn->direction);
+        (grids[6]).x = grid_x + 2;
+        (grids[6]).y = grid_y - (2 * pawn->direction);
 
-        grid_8->x = grid_x - 2;
-        grid_8->y = grid_y - (2 * pawn->direction);
+        (grids[7]).x = grid_x - 2;
+        (grids[7]).y = grid_y - (2 * pawn->direction);
     }
 }
 
