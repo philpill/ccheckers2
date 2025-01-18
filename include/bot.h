@@ -5,7 +5,7 @@
 #include <SDL.h>
 #include "game.h"
 
-int bot_get_grid_rating(int grid_rating_index, int colour, Grid current_grid, Grid dest_grid);
+int bot_get_grid_rating(int pawn_id, int colour, Grid current_grid, Grid dest_grid);
 void bot_clear_grid_ratings();
 void bot_exec();
 void bot_init(Game *state);

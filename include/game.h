@@ -38,7 +38,6 @@ typedef struct {
     int current_colour;
     int selected_pawn_id;
     int pawn_count;
-    int* grid_ratings;
     bool is_quit;
     bool is_player1_bot;
     bool is_player2_bot;
@@ -60,6 +59,8 @@ typedef struct {
     int rating;
 } MaxRating;
 
+bool game_is_valid_move(int pawn_id, int grid_x, int grid_y);
+bool game_is_valid_capture(int pawn_id, int grid_x, int grid_y);
 void game_init();
 Game* game_get_state();
 void game_mouse_event(int x, int y, Uint32 mouse_state);
