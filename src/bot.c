@@ -11,7 +11,7 @@ static MaxRating ratings[200];
 
 static int rating_indexes[96];
 
-static int max_rating;
+static int max_rating = -1;
 
 // negative rating is illegal move
 int bot_get_grid_rating(int pawn_id, int colour, Grid current_grid, Grid dest_grid)
@@ -48,7 +48,8 @@ void bot_clear_grid_ratings()
 
 void populate_ratings(Pawn* pawn, int count)
 {
-    if (pawn->colour == game_state->current_colour)
+    if (pawn->colour == game_state->current_colour
+        && pawn->is_active)
     {
         Grid grids[8];
 
@@ -73,6 +74,15 @@ void populate_ratings(Pawn* pawn, int count)
     }
 }
 
+void bot_end_turn()
+{
+    bot_clear_grid_ratings();
+    pawn_deselect_all();
+
+    // switch active player
+    game_state->current_colour = game_state->current_colour == 0 ? 1 : 0;
+}
+
 void bot_exec()
 {
     if ((game_state->is_player1_bot && game_state->current_colour == -1)
@@ -87,7 +97,7 @@ void bot_exec()
         for (int i = 0; i < 200; i++)
         {
             // negative rating is illegal move
-            if (ratings[i].rating > 0 && ratings[i].rating > max_rating) {
+            if (ratings[i].rating > -1 && ratings[i].rating > max_rating) {
                 max_rating = ratings[i].rating;
             }
         }
@@ -96,60 +106,60 @@ void bot_exec()
 
         for (int i = 0; i < 200; i++)
         {
-            if (ratings[i].rating == max_rating)
+            if (ratings[i].rating == max_rating && max_rating != -1)
             {
                 rating_indexes[rating_count++] = ratings[i].rating_id;
             }
         }
 
-        if (rating_count == 0)
+        if (rating_count == 0 || max_rating == -1)
         {
             // no valid move - current player loses
-            printf("max_rating %d\n", max_rating);
             printf("no valid move - current player loses\n");
+
         }
-
-        int random_index = rand() % rating_count;
-
-        int rating_index = rating_indexes[random_index];
-
-        int mod = rating_index % 8;
-
-        int id = (rating_index - mod) / 8;
-
-        int grid_index = ratings[rating_index].grid_index;
-
-        Pawn* pawn = pawn_get_by_id(id);
-
-        game_state->selected_pawn_id = pawn->id;
-
-        Grid grids[8];
-
-        pawn_get_moves(pawn, grids);
-
-        int grid_x = grids[grid_index].x;
-        int grid_y = grids[grid_index].y;
-
-        int x = board_grid_to_x(grid_x);
-        int y = board_grid_to_y(grid_y);
-
-        int snapped_center_x = board_get_snapped_center_x(x);
-        int snapped_center_y = board_get_snapped_center_y(y);
-
-        if (game_is_valid_capture(pawn->id, grid_x, grid_y))
+        else
         {
-            pawn_capture_move(pawn, &(grids[grid_index]));
-        }
+            int random_index = rand() % rating_count;
 
-        pawn_set_x(pawn, grid_x, snapped_center_x);
-        pawn_set_y(pawn, grid_y, snapped_center_y);
+            int rating_index = rating_indexes[random_index];
+
+            int mod = rating_index % 8;
+
+            int id = (rating_index - mod) / 8;
+
+            int grid_index = ratings[rating_index].grid_index;
+
+            Pawn* pawn = pawn_get_by_id(id);
+
+            pawn->is_selected = true;
+            game_state->selected_pawn_id = pawn->id;
+
+            Grid grids[8];
+
+            pawn_get_moves(pawn, grids);
+
+            int grid_x = grids[grid_index].x;
+            int grid_y = grids[grid_index].y;
+
+            int x = board_grid_to_x(grid_x);
+            int y = board_grid_to_y(grid_y);
+
+            int snapped_center_x = board_get_snapped_center_x(x);
+            int snapped_center_y = board_get_snapped_center_y(y);
+
+            if (game_is_valid_capture(pawn->id, grid_x, grid_y))
+            {
+                pawn_capture_move(pawn, &(grids[grid_index]));
+            }
+
+            pawn_set_x(pawn, grid_x, snapped_center_x);
+            pawn_set_y(pawn, grid_y, snapped_center_y);
+        }
 
         // printf("bot pawn: %d, x: %d y: %d\n", pawn->id, grid_x, grid_y);
 
-        bot_clear_grid_ratings();
-
-        // switch active player
-        game_state->current_colour = game_state->current_colour == 0 ? 1 : 0;
+        bot_end_turn();
     }
 }
 

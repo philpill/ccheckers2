@@ -15,6 +15,7 @@ int pawn_mouse_click(Pawn *pawn);
 Pawn *pawn_get_all();
 Pawn* pawn_get_by_id(int id);
 void pawn_capture_move(Pawn *pawn, Grid *grid);
+void pawn_capture(Pawn* pawn);
 void pawn_deselect_all();
 void pawn_exec();
 void pawn_get_moves(Pawn* pawn, Grid* grids);

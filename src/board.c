@@ -134,12 +134,19 @@ void board_set_movement_tile_grid(int tile_index, Grid grid)
 
 void board_clear_tile_grids()
 {
+    int snapped_x = board_get_snapped_x(-1);
+    int snapped_y = board_get_snapped_y(-1);
+
     for (int i = 0;i < 8;i++)
     {
-        game_state->movement_tiles[i].x = board_get_snapped_x(0);
-        game_state->movement_tiles[i].y = board_get_snapped_y(0);
+        game_state->movement_tiles[i].x = snapped_x;
+        game_state->movement_tiles[i].y = snapped_y;
         game_state->movement_tiles[i].is_enabled = false;
     }
+
+    game_state->active_tile->is_enabled = false;
+    game_state->active_tile->x = snapped_x;
+    game_state->active_tile->y = snapped_y;
 }
 
 void board_quit()

@@ -57,6 +57,16 @@ void pawn_init(Game* state)
             j = j + 2;
         }
     }
+
+    // for (int i = 1; i < 13; i++)
+    // {
+    //     pawn_capture(&(game_state->pawns[i]));
+    // }
+
+    // for (int i = 14; i < 24; i++)
+    // {
+    //     pawn_capture(&(game_state->pawns[i]));
+    // }
 }
 
 void pawn_deselect_all()
@@ -196,12 +206,6 @@ bool pawn_is_opposition(int colour, Grid* grid)
 
 void pawn_capture_move(Pawn* pawn, Grid* grid)
 {
-    // printf("grid_x: %d\n", grid->x);
-    // printf("grid_y: %d\n", grid->y);
-
-    // printf("pawn_x: %d\n", pawn->x);
-    // printf("pawn_y: %d\n", pawn->y);
-
     int capture_x = grid->x > pawn->x ? pawn->x + 1 : pawn->x - 1;
     int capture_y = grid->y > pawn->y ? pawn->y + 1 : pawn->y - 1;
 
@@ -211,20 +215,19 @@ void pawn_capture_move(Pawn* pawn, Grid* grid)
             && capture_x == game_state->pawns[i].x
             && capture_y == game_state->pawns[i].y)
         {
-            // printf("pawn_id1: %d\n", pawn->id);
-            // printf("pawn_id2: %d\n", game_state->pawns[i].id);
-            // printf("capture_x: %d\n", capture_x);
-            // printf("capture_y: %d\n", capture_y);
-
-            game_state->pawns[i].is_active = false;
-            game_state->pawns[i].x = -1;
-            game_state->pawns[i].y = -1;
-            game_state->pawns[i].grid_x = -1;
-            game_state->pawns[i].grid_y = -1;
-
+            pawn_capture(&(game_state->pawns[i]));
             return;
         }
     }
+}
+
+void pawn_capture(Pawn* pawn)
+{
+    pawn->is_active = false;
+    pawn->x = -1;
+    pawn->y = -1;
+    pawn->grid_x = -1;
+    pawn->grid_y = -1;
 }
 
 bool pawn_is_capture_available(int pawn_colour, Grid* grid1, Grid* grid2)
