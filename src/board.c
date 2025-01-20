@@ -96,8 +96,7 @@ void board_init(Game* state)
     game_state->cursor_tile->y = board_get_snapped_y(0);
     game_state->cursor_tile->size = game_state->grid_size;
     game_state->cursor_tile->colour = 4;
-    game_state->cursor_tile->is_enabled = true;
-
+    game_state->cursor_tile->is_enabled = false;
 }
 
 void board_exec(Game* state)

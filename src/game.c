@@ -17,6 +17,7 @@ void game_init()
     game_state.current_colour = 0;
     game_state.selected_pawn_id = -1;
     game_state.pawn_count = 24;
+    game_state.stage = 0;
     game_state.is_player1_bot = false;
     game_state.is_player2_bot = true;
     game_state.is_quit = false;
@@ -44,6 +45,11 @@ bool game_is_current_colour_bot(int current_colour)
 {
     return (current_colour == -1 && game_state.is_player1_bot)
         || (current_colour == 1 && game_state.is_player2_bot);
+}
+
+void game_ui_hover(int x, int y)
+{
+
 }
 
 void game_mouse_hover(int x, int y)
@@ -130,7 +136,12 @@ bool game_is_valid_capture(int pawn_id, int grid_x, int grid_y)
     return is_valid;
 }
 
-void game_mouse_click(int x, int y)
+void game_ui_click(int x, int y)
+{
+
+}
+
+void game_board_click(int x, int y)
 {
     int grid_x = board_x_to_grid(x);
     int grid_y = board_x_to_grid(y);
@@ -269,9 +280,23 @@ void game_mouse_event(int x, int y, Uint32 mouse_state)
 
     if (x > game_state.board_bound_x || y > game_state.board_bound_x) { return; }
 
-    game_mouse_hover(x, y);
+    if (game_state.stage == 0)
+    {
+        game_ui_hover(x, y);
+    } 
+    else 
+    {
+        game_mouse_hover(x, y);
+    }
 
     if (!is_click) { return; }
 
-    game_mouse_click(x, y);
+    if (game_state.stage == 0)
+    {
+        game_ui_click(x, y);
+    } 
+    else 
+    {
+        game_board_click(x, y);
+    }
 }

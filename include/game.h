@@ -38,6 +38,7 @@ typedef struct {
     int current_colour;
     int selected_pawn_id;
     int pawn_count;
+    int stage;
     bool is_quit;
     bool is_player1_bot;
     bool is_player2_bot;
