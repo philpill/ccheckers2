@@ -9,9 +9,13 @@ static Game* game_state;
 
 static MaxRating ratings[200];
 
+static Grid grids[8];
+
 static int rating_indexes[96];
 
 static int max_rating = -1;
+
+static time_t seconds_1 = -1;
 
 // negative rating is illegal move
 int bot_get_grid_rating(int pawn_id, int colour, Grid current_grid, Grid dest_grid)
@@ -29,6 +33,15 @@ int bot_get_grid_rating(int pawn_id, int colour, Grid current_grid, Grid dest_gr
     }
 
     return rating;
+}
+
+void bot_clear_grids()
+{
+    for (int i = 0; i < 8; i++)
+    {
+        grids[i].x = -1;
+        grids[i].y = -1;
+    }
 }
 
 void bot_clear_grid_ratings()
@@ -51,13 +64,7 @@ void populate_ratings(Pawn* pawn, int count)
     if (pawn->colour == game_state->current_colour
         && pawn->is_active)
     {
-        Grid grids[8];
-
-        for (int i = 0; i < 8; i++)
-        {
-            grids[i].x = -1;
-            grids[i].y = -1;
-        }
+        bot_clear_grids();
 
         pawn_get_moves(pawn, grids);
 
@@ -76,6 +83,8 @@ void populate_ratings(Pawn* pawn, int count)
 
 void bot_end_turn()
 {
+    seconds_1 = -1;
+    bot_clear_grids();
     bot_clear_grid_ratings();
     pawn_deselect_all();
 
@@ -85,6 +94,21 @@ void bot_end_turn()
 
 void bot_exec()
 {
+    int now = time(NULL);
+
+    if (seconds_1 < 0) {
+        seconds_1 = now;
+    }
+
+    if ((now - seconds_1) < 3)
+    {
+        return;
+    }
+    else
+    {
+        seconds_1 = now;
+    }
+
     if ((game_state->is_player1_bot && game_state->current_colour == -1)
         || (game_state->is_player2_bot && game_state->current_colour == 1))
     {
@@ -135,8 +159,7 @@ void bot_exec()
             pawn->is_selected = true;
             game_state->selected_pawn_id = pawn->id;
 
-            Grid grids[8];
-
+            bot_clear_grids();
             pawn_get_moves(pawn, grids);
 
             int grid_x = grids[grid_index].x;

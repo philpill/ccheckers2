@@ -48,6 +48,8 @@ int main(int argc, char* args[])
     board_init();
     render_init(state);
 
+    // game_start();
+
     while (!state->is_quit)
     {
         loop(state);

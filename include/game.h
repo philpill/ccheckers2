@@ -38,10 +38,12 @@ typedef struct {
     int current_colour;
     int selected_pawn_id;
     int pawn_count;
+    int selected_option_index;
     int stage;
     bool is_quit;
     bool is_player1_bot;
     bool is_player2_bot;
+    char** options;
     Pawn* pawns;
     Tile* movement_tiles;
     Tile* cursor_tile;
@@ -66,5 +68,6 @@ void game_init();
 Game* game_get_state();
 void game_mouse_event(int x, int y, Uint32 mouse_state);
 void game_quit();
+void game_start();
 
 #endif

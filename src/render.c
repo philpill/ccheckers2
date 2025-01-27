@@ -1,5 +1,6 @@
 #include <math.h>
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include "render.h"
@@ -13,6 +14,7 @@ const int RENDER_SCREEN_HEIGHT = 480;
 
 static SDL_Window* window = NULL;
 static SDL_Renderer* renderer = NULL;
+static TTF_Font* font = NULL;
 
 static Game* game_state;
 
@@ -151,15 +153,57 @@ void render_dialog_frame()
     };
 
     set_render_colour(0);
-    SDL_RenderFillRect(renderer, &outline_rect);
+    if (SDL_RenderFillRect(renderer, &outline_rect) < 0)
+    {
+        printf("error: %s\n", SDL_GetError());
+    }
 
     set_render_colour(1);
-    SDL_RenderFillRect(renderer, &fill_rect);
+    if (SDL_RenderFillRect(renderer, &fill_rect) < 0)
+    {
+        printf("error: %s\n", SDL_GetError());
+    }
+}
+
+void render_options()
+{
+    SDL_Color colour_white = { 255, 255, 255 };
+
+    char* option = game_state->options[0];
+
+    SDL_Surface* surface = TTF_RenderText_Solid(font, option, colour_white);
+
+    if (surface == NULL)
+    {
+        printf("error: %s\n", SDL_GetError());
+    }
+
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+    if (texture == NULL)
+    {
+        printf("error: %s\n", SDL_GetError());
+    }
+
+    SDL_Rect rect; //create a rect
+    rect.x = 50;  //controls the rect's x coordinate 
+    rect.y = 50; // controls the rect's y coordinte
+    rect.w = 100; // controls the width of the rect
+    rect.h = 32; // controls the height of the rect
+
+    if (SDL_RenderCopy(renderer, texture, NULL, &rect) < 0)
+    {
+        printf("error: %s\n", SDL_GetError());
+    }
+
+    SDL_FreeSurface(surface);
+    SDL_DestroyTexture(texture);
 }
 
 void render_stage_0()
 {
     render_dialog_frame();
+    render_options();
 }
 
 void render_stage_1()
@@ -187,14 +231,14 @@ void render_stage_1()
 
 void render_ui()
 {
-    switch(game_state->stage)
+    switch (game_state->stage)
     {
-        case 0:
-            render_stage_0();
-            break;
-        case 1:
-            render_stage_1();
-            break;
+    case 0:
+        render_stage_0();
+        break;
+    case 1:
+        render_stage_1();
+        break;
     }
 }
 
@@ -288,6 +332,17 @@ void init_pieces()
 void render_init(Game* state)
 {
     game_state = state;
+
+    if (TTF_Init() < 0) {
+        printf("error: %s\n", SDL_GetError());
+    }
+
+    font = TTF_OpenFont("RobotoMono-Regular.ttf", 24);
+
+    if (font == NULL)
+    {
+        printf("error: %s\n", SDL_GetError());
+    }
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {

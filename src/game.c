@@ -26,11 +26,28 @@ void game_init()
     game_state.movement_tiles = malloc(8 * sizeof(Tile));
     game_state.active_tile = malloc(sizeof(Tile));
     game_state.cursor_tile = malloc(sizeof(Tile));
+
+    game_state.options = malloc(4 * sizeof(char*));
+    for (int i = 0; i < 4; i++)
+    {
+        game_state.options[i] = malloc(80 * sizeof(char));
+    }
+    game_state.selected_option_index = -1;
+    game_state.options[0] = "option 1";
+    game_state.options[1] = "option 2";
+    game_state.options[2] = "option 3";
+    game_state.options[3] = "option 4";
 }
 
 Game* game_get_state()
 {
     return &game_state;
+}
+
+void game_start()
+{
+    game_state.stage = 1;
+    game_state.cursor_tile->is_enabled = true;
 }
 
 void game_quit()

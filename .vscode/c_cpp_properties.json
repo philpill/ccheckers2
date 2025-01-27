@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include/**",
-                "C:/dev/SDL2-2.30.9/include/SDL2/*"
+                "C:/dev/SDL2-2.30.9/include/SDL2/*",
+                "C:/dev/SDL2_ttf-2.24.0/*"
             ],
             "defines": [
                 "_DEBUG",
