@@ -10,7 +10,7 @@
 #include "board.h"
 #include "bot.h"
 
-static const int fps = 30;
+static const int fps = 15;
 static double interval = 0.0;
 
 void loop(Game *state)

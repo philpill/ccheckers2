@@ -29,6 +29,20 @@ typedef struct {
 } Tile;
 
 typedef struct {
+    bool is_hover;
+    char* text;
+    int colour_index;
+    int group;
+    int height;
+    int id;
+    int width;
+    int x1;
+    int x2;
+    int y1;
+    int y2;
+} Option;
+
+typedef struct {
     int id;
     int grid_size;
     int board_offset_x;
@@ -43,7 +57,7 @@ typedef struct {
     bool is_quit;
     bool is_player1_bot;
     bool is_player2_bot;
-    char** options;
+    Option* options;
     Pawn* pawns;
     Tile* movement_tiles;
     Tile* cursor_tile;

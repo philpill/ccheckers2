@@ -165,13 +165,27 @@ void render_dialog_frame()
     }
 }
 
-void render_options()
+void render_option(Option* option)
 {
     SDL_Color colour_white = { 255, 255, 255 };
+    SDL_Color colour_grey = { 100, 100, 100 };
 
-    char* option = game_state->options[0];
+    SDL_Color option_colour = option->colour_index == 1
+        ? colour_white 
+        : colour_grey;
 
-    SDL_Surface* surface = TTF_RenderText_Solid(font, option, colour_white);
+    SDL_Surface* surface = TTF_RenderText_Solid(
+        font, 
+        option->text, 
+        option_colour
+    );
+
+    int w, h;
+
+    TTF_SizeText(font, option->text, &w, &h);
+
+    option->x2 = option->x1 + w;
+    option->y2 = option->y1 + h;
 
     if (surface == NULL)
     {
@@ -186,10 +200,10 @@ void render_options()
     }
 
     SDL_Rect rect; //create a rect
-    rect.x = 50;  //controls the rect's x coordinate 
-    rect.y = 50; // controls the rect's y coordinte
-    rect.w = 100; // controls the width of the rect
-    rect.h = 32; // controls the height of the rect
+    rect.x = option->x1;  //controls the rect's x coordinate 
+    rect.y = option->y1; // controls the rect's y coordinte
+    rect.w = w; // controls the width of the rect
+    rect.h = h; // controls the height of the rect
 
     if (SDL_RenderCopy(renderer, texture, NULL, &rect) < 0)
     {
@@ -198,6 +212,12 @@ void render_options()
 
     SDL_FreeSurface(surface);
     SDL_DestroyTexture(texture);
+}
+
+void render_options()
+{
+    render_option(&(game_state->options[0]));
+    render_option(&(game_state->options[1]));
 }
 
 void render_stage_0()
@@ -337,7 +357,7 @@ void render_init(Game* state)
         printf("error: %s\n", SDL_GetError());
     }
 
-    font = TTF_OpenFont("RobotoMono-Regular.ttf", 24);
+    font = TTF_OpenFont("RobotoMono-Regular.ttf", 14);
 
     if (font == NULL)
     {

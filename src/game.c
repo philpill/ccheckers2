@@ -9,6 +9,8 @@
 
 static Game game_state;
 
+static int options_count = 4;
+
 void game_init()
 {
     game_state.id = 1;
@@ -27,16 +29,29 @@ void game_init()
     game_state.active_tile = malloc(sizeof(Tile));
     game_state.cursor_tile = malloc(sizeof(Tile));
 
-    game_state.options = malloc(4 * sizeof(char*));
-    for (int i = 0; i < 4; i++)
+    game_state.options = malloc(options_count * sizeof(Option));
+    for (int i = 0; i < options_count; i++)
     {
-        game_state.options[i] = malloc(80 * sizeof(char));
+        game_state.options[i].id = i;
+        game_state.options[i].height = 0;
+        game_state.options[i].width = 0;
+        game_state.options[i].x1 = 0;
+        game_state.options[i].x2 = 0;
+        game_state.options[i].y1 = 0;
+        game_state.options[i].y2 = 0;
+        game_state.options[i].text = malloc(80 * sizeof(char));
     }
     game_state.selected_option_index = -1;
-    game_state.options[0] = "option 1";
-    game_state.options[1] = "option 2";
-    game_state.options[2] = "option 3";
-    game_state.options[3] = "option 4";
+    game_state.options[0].text = "option 1";
+    game_state.options[0].x1 = 50;
+    game_state.options[0].y1 = 50;
+    game_state.options[0].group = 1;
+    game_state.options[1].text = "option 2";
+    game_state.options[1].x1 = 50;
+    game_state.options[1].y1 = 80;
+    game_state.options[1].group = 1;
+    game_state.options[2].text = "option 3";
+    game_state.options[3].text = "option 4";
 }
 
 Game* game_get_state()
@@ -56,6 +71,13 @@ void game_quit()
     free(game_state.movement_tiles);
     free(game_state.active_tile);
     free(game_state.cursor_tile);
+
+    for (int i = 0; i < options_count; i++)
+    {
+        free(game_state.options[i].text);
+    }
+
+    free(game_state.options);
 }
 
 bool game_is_current_colour_bot(int current_colour)
@@ -66,7 +88,23 @@ bool game_is_current_colour_bot(int current_colour)
 
 void game_ui_hover(int x, int y)
 {
+    for (int i = 0; i < options_count; i++)
+    {
+        bool is_hover = false;
 
+        if (game_state.options[i].group == 1)
+        {
+            if (game_state.options[i].x1 < x
+                && game_state.options[i].x2 > x
+                && game_state.options[i].y1 < y
+                && game_state.options[i].y2 > y)
+            {
+                is_hover = true;
+            }
+        }
+        game_state.options[i].is_hover = is_hover;
+        game_state.options[i].colour_index = is_hover ? 1 : 0;
+    }
 }
 
 void game_mouse_hover(int x, int y)
@@ -300,8 +338,8 @@ void game_mouse_event(int x, int y, Uint32 mouse_state)
     if (game_state.stage == 0)
     {
         game_ui_hover(x, y);
-    } 
-    else 
+    }
+    else
     {
         game_mouse_hover(x, y);
     }
@@ -311,8 +349,8 @@ void game_mouse_event(int x, int y, Uint32 mouse_state)
     if (game_state.stage == 0)
     {
         game_ui_click(x, y);
-    } 
-    else 
+    }
+    else
     {
         game_board_click(x, y);
     }
