@@ -42,15 +42,18 @@ void game_init()
         game_state.options[i].text = malloc(80 * sizeof(char));
     }
     game_state.selected_option_index = -1;
-    game_state.options[0].text = "option 1";
+    game_state.options[0].text = "1P vs CPU";
     game_state.options[0].x1 = 50;
     game_state.options[0].y1 = 50;
     game_state.options[0].group = 1;
-    game_state.options[1].text = "option 2";
+    game_state.options[1].text = "1P vs 2P";
     game_state.options[1].x1 = 50;
     game_state.options[1].y1 = 80;
     game_state.options[1].group = 1;
-    game_state.options[2].text = "option 3";
+    game_state.options[2].text = "Restart";
+    game_state.options[2].x1 = 50;
+    game_state.options[2].y1 = 50;
+    game_state.options[2].group = 2;
     game_state.options[3].text = "option 4";
 }
 
@@ -92,7 +95,17 @@ void game_ui_hover(int x, int y)
     {
         bool is_hover = false;
 
-        if (game_state.options[i].group == 1)
+        if (game_state.stage == 0 && game_state.options[i].group == 1)
+        {
+            if (game_state.options[i].x1 < x
+                && game_state.options[i].x2 > x
+                && game_state.options[i].y1 < y
+                && game_state.options[i].y2 > y)
+            {
+                is_hover = true;
+            }
+        } 
+        else if (game_state.stage == 2 && game_state.options[i].group == 2)
         {
             if (game_state.options[i].x1 < x
                 && game_state.options[i].x2 > x
@@ -193,7 +206,36 @@ bool game_is_valid_capture(int pawn_id, int grid_x, int grid_y)
 
 void game_ui_click(int x, int y)
 {
+    for (int i = 0; i < options_count; i++)
+    {
+        if (game_state.options[i].is_hover)
+        {
+            if (i == 0)
+            {
+                pawn_initialise_pawns();
+                render_init_pieces();
 
+                game_state.stage = 1;
+                game_state.is_player1_bot = false;
+                game_state.is_player2_bot = true;
+            }
+            else if (i == 1)
+            {
+                pawn_initialise_pawns();
+                render_init_pieces();
+
+                game_state.stage = 1;
+                game_state.is_player1_bot = false;
+                game_state.is_player2_bot = false;
+            } 
+            else if (i == 2)
+            {
+                game_state.stage = 0;
+                game_state.selected_pawn_id = -1;
+                game_state.current_colour = 0;
+            }
+        }
+    }
 }
 
 void game_board_click(int x, int y)
@@ -335,7 +377,7 @@ void game_mouse_event(int x, int y, Uint32 mouse_state)
 
     if (x > game_state.board_bound_x || y > game_state.board_bound_x) { return; }
 
-    if (game_state.stage == 0)
+    if (game_state.stage == 0 || game_state.stage == 2)
     {
         game_ui_hover(x, y);
     }
@@ -346,7 +388,7 @@ void game_mouse_event(int x, int y, Uint32 mouse_state)
 
     if (!is_click) { return; }
 
-    if (game_state.stage == 0)
+    if (game_state.stage == 0 || game_state.stage == 2)
     {
         game_ui_click(x, y);
     }

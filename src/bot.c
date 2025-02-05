@@ -139,8 +139,8 @@ void bot_exec()
         if (rating_count == 0 || max_rating == -1)
         {
             // no valid move - current player loses
+            game_state->stage = 2;
             printf("no valid move - current player loses\n");
-
         }
         else
         {

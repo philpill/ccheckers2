@@ -214,16 +214,23 @@ void render_option(Option* option)
     SDL_DestroyTexture(texture);
 }
 
-void render_options()
+void render_options(int group)
 {
-    render_option(&(game_state->options[0]));
-    render_option(&(game_state->options[1]));
+    if (group == 0)
+    {
+        render_option(&(game_state->options[0]));
+        render_option(&(game_state->options[1]));
+    }
+    if (group == 1)
+    {
+        render_option(&(game_state->options[2]));
+    }
 }
 
 void render_stage_0()
 {
     render_dialog_frame();
-    render_options();
+    render_options(0);
 }
 
 void render_stage_1()
@@ -249,6 +256,12 @@ void render_stage_1()
     SDL_RenderFillRect(renderer, &fill_rect);
 }
 
+void render_stage_2()
+{
+    render_dialog_frame();
+    render_options(1);
+}
+
 void render_ui()
 {
     switch (game_state->stage)
@@ -258,6 +271,9 @@ void render_ui()
         break;
     case 1:
         render_stage_1();
+        break;
+    case 2:
+        render_stage_2();
         break;
     }
 }
@@ -339,7 +355,7 @@ void render_update_grid_y(Pawn* pawn)
     pawn->grid_y = board_get_snapped_center_y(grid_y);
 }
 
-void init_pieces()
+void render_init_pieces()
 {
     Pawn* pawns = pawn_get_all();
     for (int i = 0; i < game_state->pawn_count; i++)
@@ -388,7 +404,7 @@ void render_init(Game* state)
         printf("error: %s\n", SDL_GetError());
     }
 
-    init_pieces();
+    render_init_pieces();
 }
 
 void render_exec(Game* state)

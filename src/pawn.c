@@ -11,9 +11,9 @@ Pawn* pawn_get_all()
     return game_state->pawns;
 }
 
-void pawn_init(Game* state)
+void pawn_initialise_pawns()
 {
-    game_state = state;
+    game_state->pawn_count = 24;
 
     int id = 0;
     for (int i = 0; i < 3; i++)
@@ -57,16 +57,42 @@ void pawn_init(Game* state)
             j = j + 2;
         }
     }
+}
 
-    // for (int i = 1; i < 13; i++)
-    // {
-    //     pawn_capture(&(game_state->pawns[i]));
-    // }
+void pawn_initialise_pawns_test()
+{
+    game_state->pawn_count = 2;
 
-    // for (int i = 14; i < 24; i++)
-    // {
-    //     pawn_capture(&(game_state->pawns[i]));
-    // }
+    game_state->pawns[0].id = 0;
+    game_state->pawns[0].colour = 0;
+    game_state->pawns[0].x = 0;
+    game_state->pawns[0].y = 0;
+    game_state->pawns[0].radius = 0;
+    game_state->pawns[0].direction = 1;
+    game_state->pawns[0].is_king = false;
+    game_state->pawns[0].is_hover = false;
+    game_state->pawns[0].is_selected = false;
+    game_state->pawns[0].is_active = true;
+
+
+    game_state->pawns[1].id = 1;
+    game_state->pawns[1].colour = 1;
+    game_state->pawns[1].x = 1;
+    game_state->pawns[1].y = 1;
+    game_state->pawns[1].radius = 0;
+    game_state->pawns[1].direction = -1;
+    game_state->pawns[1].is_king = false;
+    game_state->pawns[1].is_hover = false;
+    game_state->pawns[1].is_selected = false;
+    game_state->pawns[1].is_active = true;
+
+}
+
+void pawn_init(Game* state)
+{
+    game_state = state;
+
+    pawn_initialise_pawns_test();
 }
 
 void pawn_deselect_all()
