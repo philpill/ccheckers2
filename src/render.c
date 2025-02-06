@@ -220,10 +220,18 @@ void render_options(int group)
     {
         render_option(&(game_state->options[0]));
         render_option(&(game_state->options[1]));
+        render_option(&(game_state->options[2]));
     }
     if (group == 1)
     {
-        render_option(&(game_state->options[2]));
+        render_option(&(game_state->options[3]));
+        render_option(&(game_state->options[4]));
+    }
+    if (group == 2)
+    {
+        render_option(&(game_state->options[5]));
+        render_option(&(game_state->options[6]));
+        render_option(&(game_state->options[7]));
     }
 }
 
@@ -262,6 +270,12 @@ void render_stage_2()
     render_options(1);
 }
 
+void render_stage_3()
+{
+    render_dialog_frame();
+    render_options(2);
+}
+
 void render_ui()
 {
     switch (game_state->stage)
@@ -274,6 +288,9 @@ void render_ui()
         break;
     case 2:
         render_stage_2();
+        break;
+    case 3:
+        render_stage_3();
         break;
     }
 }
