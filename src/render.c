@@ -44,7 +44,7 @@ static void set_render_colour(int index)
         SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
         break;
     case 5:
-        SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+        SDL_SetRenderDrawColor(renderer, 150, 150, 150, 255);
         break;
     default:
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -165,10 +165,10 @@ void render_dialog_frame()
     }
 }
 
-void render_option(Option* option)
+void render_option(Option* option, int x, int y)
 {
     SDL_Color colour_white = { 255, 255, 255 };
-    SDL_Color colour_grey = { 100, 100, 100 };
+    SDL_Color colour_grey = { 150, 150, 150 };
 
     SDL_Color option_colour = option->colour_index == 1
         ? colour_white 
@@ -180,17 +180,23 @@ void render_option(Option* option)
         option_colour
     );
 
-    int w, h;
-
-    TTF_SizeText(font, option->text, &w, &h);
-
-    option->x2 = option->x1 + w;
-    option->y2 = option->y1 + h;
-
     if (surface == NULL)
     {
         printf("error: %s\n", SDL_GetError());
     }
+
+    int w, h;
+
+    option->x1 = x;
+    option->y1 = y;
+
+    if (TTF_SizeText(font, option->text, &w, &h) < 0)
+    {
+        printf("error: %s\n", SDL_GetError());
+    }
+
+    option->x2 = option->x1 + w;
+    option->y2 = option->y1 + h;
 
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 
@@ -216,22 +222,24 @@ void render_option(Option* option)
 
 void render_options(int group)
 {
+    int x = 80;
+
     if (group == 0)
     {
-        render_option(&(game_state->options[0]));
-        render_option(&(game_state->options[1]));
-        render_option(&(game_state->options[2]));
+        render_option(&(game_state->options[0]), x, 50);
+        render_option(&(game_state->options[1]), x, 80);
+        render_option(&(game_state->options[2]), x, 110);
     }
     if (group == 1)
     {
-        render_option(&(game_state->options[3]));
-        render_option(&(game_state->options[4]));
+        render_option(&(game_state->options[3]), x, 50);
+        render_option(&(game_state->options[4]), x, 80);
     }
     if (group == 2)
     {
-        render_option(&(game_state->options[5]));
-        render_option(&(game_state->options[6]));
-        render_option(&(game_state->options[7]));
+        render_option(&(game_state->options[5]), x, 50);
+        render_option(&(game_state->options[6]), x, 80);
+        render_option(&(game_state->options[7]), x, 110);
     }
 }
 
@@ -390,7 +398,7 @@ void render_init(Game* state)
         printf("error: %s\n", SDL_GetError());
     }
 
-    font = TTF_OpenFont("RobotoMono-Regular.ttf", 14);
+    font = TTF_OpenFont("OpenSans-Bold.ttf", 14);
 
     if (font == NULL)
     {
@@ -440,6 +448,7 @@ void render_exec(Game* state)
 
 void render_quit()
 {
+    TTF_CloseFont(font);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 }

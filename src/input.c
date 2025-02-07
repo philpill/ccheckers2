@@ -17,8 +17,7 @@ void input_exec(Game* state)
             switch (e.key.keysym.sym)
             {
             case SDLK_ESCAPE:
-                // state->is_quit = true;
-                state->stage = 3;
+                state->stage = state->stage == 3 ? 1 : 3;
                 break;
             }
         }

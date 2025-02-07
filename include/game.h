@@ -28,9 +28,12 @@ typedef struct {
     bool is_enabled;
 } Tile;
 
+enum option_command { onevcpu, onevtwo, resume, restart, quit };
+
 typedef struct {
     bool is_hover;
     char* text;
+    enum option_command command;
     int colour_index;
     int group;
     int height;

@@ -33,6 +33,7 @@ void game_init()
     for (int i = 0; i < options_count; i++)
     {
         game_state.options[i].id = i;
+        game_state.options[i].group = 0;
         game_state.options[i].height = 0;
         game_state.options[i].width = 0;
         game_state.options[i].x1 = 0;
@@ -44,38 +45,30 @@ void game_init()
     game_state.selected_option_index = -1;
 
     game_state.options[0].text = "1P vs CPU";
-    game_state.options[0].x1 = 50;
-    game_state.options[0].y1 = 50;
+    game_state.options[0].command = onevcpu;
     game_state.options[0].group = 1;
     game_state.options[1].text = "1P vs 2P";
-    game_state.options[1].x1 = 50;
-    game_state.options[1].y1 = 80;
+    game_state.options[1].command = onevtwo;
     game_state.options[1].group = 1;
     game_state.options[2].text = "Exit";
-    game_state.options[2].x1 = 50;
-    game_state.options[2].y1 = 110;
+    game_state.options[2].command = quit;
     game_state.options[2].group = 1;
 
     game_state.options[3].text = "Restart";
-    game_state.options[3].x1 = 50;
-    game_state.options[3].y1 = 50;
+    game_state.options[3].command = restart;
     game_state.options[3].group = 2;
     game_state.options[4].text = "Exit";
-    game_state.options[4].x1 = 50;
-    game_state.options[4].y1 = 80;
+    game_state.options[4].command = quit;
     game_state.options[4].group = 2;
 
     game_state.options[5].text = "Resume";
-    game_state.options[5].x1 = 50;
-    game_state.options[5].y1 = 50;
+    game_state.options[5].command = resume;
     game_state.options[5].group = 3;
     game_state.options[6].text = "Restart";
-    game_state.options[6].x1 = 50;
-    game_state.options[6].y1 = 80;
+    game_state.options[6].command = restart;
     game_state.options[6].group = 3;
     game_state.options[7].text = "Quit";
-    game_state.options[7].x1 = 50;
-    game_state.options[7].y1 = 110;
+    game_state.options[7].command = quit;
     game_state.options[7].group = 3;
 }
 
@@ -242,16 +235,7 @@ void game_ui_click(int x, int y)
     {
         if (game_state.options[i].is_hover)
         {
-            // "1P vs CPU"
-            // "1P vs 2P"
-            // "Exit Game"
-            // "Restart"
-            // "Exit Game"
-            // "Resume"
-            // "Restart"
-            // "Exit Game"
-
-            if (i == 0)
+            if (game_state.options[i].command == onevcpu)
             {
                 pawn_initialise_pawns();
                 render_init_pieces();
@@ -260,7 +244,7 @@ void game_ui_click(int x, int y)
                 game_state.is_player1_bot = false;
                 game_state.is_player2_bot = true;
             }
-            else if (i == 1)
+            else if (game_state.options[i].command == onevtwo)
             {
                 pawn_initialise_pawns();
                 render_init_pieces();
@@ -269,39 +253,22 @@ void game_ui_click(int x, int y)
                 game_state.is_player1_bot = false;
                 game_state.is_player2_bot = false;
             }
-            else if (i == 2)
+            else if (game_state.options[i].command == quit)
             {
                 //exit
                 game_state.is_quit = true;
             }
-            else if (i == 3)
+            else if (game_state.options[i].command == restart)
             {
                 //restart
                 game_state.stage = 0;
                 game_state.selected_pawn_id = -1;
                 game_state.current_colour = 0;
             }
-            else if (i == 4)
-            {
-                //exit
-                game_state.is_quit = true;
-            }
-            else if (i == 5)
+            else if (game_state.options[i].command == resume)
             {
                 //resume
                 game_state.stage = 1;
-            }
-            else if (i == 6)
-            {
-                //restart
-                game_state.stage = 0;
-                game_state.selected_pawn_id = -1;
-                game_state.current_colour = 0;
-            }
-            else if (i == 7)
-            {
-                //exit
-                game_state.is_quit = true;
             }
         }
     }
@@ -442,11 +409,13 @@ void game_board_click(int x, int y)
 
 void game_mouse_event(int x, int y, Uint32 mouse_state)
 {
-    bool is_click = mouse_state == SDL_BUTTON_LEFT;
-
     if (x > game_state.board_bound_x || y > game_state.board_bound_x) { return; }
 
-    if (game_state.stage == 0 || game_state.stage == 2 || game_state.stage == 3)
+    bool is_click = mouse_state == SDL_BUTTON_LEFT;
+
+    bool is_ui = game_state.stage == 0 || game_state.stage == 2 || game_state.stage == 3;
+
+    if (is_ui)
     {
         game_ui_hover(x, y);
     }
@@ -457,7 +426,7 @@ void game_mouse_event(int x, int y, Uint32 mouse_state)
 
     if (!is_click) { return; }
 
-    if (game_state.stage == 0 || game_state.stage == 2 || game_state.stage == 3)
+    if (is_ui)
     {
         game_ui_click(x, y);
     }
