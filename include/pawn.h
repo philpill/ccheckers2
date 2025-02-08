@@ -26,5 +26,7 @@ void pawn_mouse_hover(Pawn *pawn, int x, int y);
 void pawn_quit();
 void pawn_set_x(Pawn *pawn, int grid_x, int x);
 void pawn_set_y(Pawn *pawn, int grid_y, int y);
+void pawn_set_dest_x(Pawn *pawn, int x);
+void pawn_set_dest_y(Pawn *pawn, int y);
 
 #endif

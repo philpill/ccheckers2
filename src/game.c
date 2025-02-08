@@ -302,7 +302,7 @@ void game_board_click(int x, int y)
 
                 pawn_get_moves(pawn, grids);
 
-                Grid current_grid = { game_state.pawns[i].x, game_state.pawns[i].y };
+                Grid current_grid = { game_state.pawns[i].grid_x, game_state.pawns[i].grid_y };
 
                 if (!pawn_is_at_location_grid(&grids[0]))
                 {
@@ -390,8 +390,8 @@ void game_board_click(int x, int y)
             int snapped_center_x = board_get_snapped_center_x(x);
             int snapped_center_y = board_get_snapped_center_y(y);
 
-            pawn_set_x(pawn, grid_x, snapped_center_x);
-            pawn_set_y(pawn, grid_y, snapped_center_y);
+            pawn_set_dest_x(pawn, snapped_center_x);
+            pawn_set_dest_y(pawn, snapped_center_y);
 
             // switch active player
             game_state.current_colour = game_state.current_colour == 0 ? 1 : 0;

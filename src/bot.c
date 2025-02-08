@@ -7,11 +7,11 @@
 
 static Game* game_state;
 
-static MaxRating ratings[200];
+static MaxRating ratings[192]; // all pawns (24) * possible moves (8)
 
 static Grid grids[8];
 
-static int rating_indexes[96];
+static int rating_indexes[96]; // pawns (12) * possible moves (8)
 
 static int max_rating = -1;
 
@@ -179,8 +179,8 @@ void bot_exec()
                 pawn_capture_move(pawn, &(grids[grid_index]));
             }
 
-            pawn_set_x(pawn, grid_x, snapped_center_x);
-            pawn_set_y(pawn, grid_y, snapped_center_y);
+            pawn_set_dest_x(pawn, snapped_center_x);
+            pawn_set_dest_y(pawn, snapped_center_y);
         }
 
         // printf("bot pawn: %d, x: %d y: %d\n", pawn->id, grid_x, grid_y);

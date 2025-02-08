@@ -23,6 +23,8 @@ void pawn_initialise_pawns()
         {
             game_state->pawns[id].id = id;
             game_state->pawns[id].colour = 0;
+            game_state->pawns[id].dest_x = -1;
+            game_state->pawns[id].dest_y = -1;
             game_state->pawns[id].grid_x = j;
             game_state->pawns[id].grid_y = i;
             game_state->pawns[id].radius = 0;
@@ -44,6 +46,8 @@ void pawn_initialise_pawns()
         {
             game_state->pawns[id].id = id;
             game_state->pawns[id].colour = 1;
+            game_state->pawns[id].dest_x = -1;
+            game_state->pawns[id].dest_y = -1;
             game_state->pawns[id].grid_x = j;
             game_state->pawns[id].grid_y = i;
             game_state->pawns[id].radius = 0;
@@ -65,6 +69,8 @@ void pawn_initialise_pawns_test()
 
     game_state->pawns[0].id = 0;
     game_state->pawns[0].colour = 0;
+    game_state->pawns[0].dest_x = -1;
+    game_state->pawns[0].dest_y = -1;
     game_state->pawns[0].grid_x = 0;
     game_state->pawns[0].grid_y = 0;
     game_state->pawns[0].radius = 0;
@@ -77,6 +83,8 @@ void pawn_initialise_pawns_test()
 
     game_state->pawns[1].id = 1;
     game_state->pawns[1].colour = 1;
+    game_state->pawns[1].dest_x = -1;
+    game_state->pawns[1].dest_y = -1;
     game_state->pawns[1].grid_x = 1;
     game_state->pawns[1].grid_y = 1;
     game_state->pawns[1].radius = 0;
@@ -195,21 +203,72 @@ bool pawn_is_at_location_grid(Grid* grid)
     return false;
 }
 
-void pawn_set_x(Pawn* pawn, int x, int snapped_center_x)
+void pawn_set_x(Pawn* pawn, int grid_x, int x)
 {
-    pawn->x = snapped_center_x;
-    pawn->grid_x = x;
+    // pawn->x = x;
+    // pawn->grid_x = grid_x;
 }
 
-void pawn_set_y(Pawn* pawn, int y, int snapped_center_y)
+void pawn_set_y(Pawn* pawn, int grid_y, int y)
 {
-    pawn->y = snapped_center_y;
-    pawn->grid_y = y;
+    // pawn->y = y;
+    // pawn->grid_y = grid_y;
 
-    if ((pawn->direction > 0 && y == 7)
-        || (pawn->direction < 0 && y == 0))
+    // if ((pawn->direction > 0 && grid_y == 7)
+    //     || (pawn->direction < 0 && grid_y == 0))
+    // {
+    //     pawn->is_king = true;
+    // }
+}
+
+void pawn_set_dest_x(Pawn* pawn, int dest_x)
+{
+    pawn->dest_x = dest_x;
+}
+
+void pawn_set_dest_y(Pawn* pawn, int dest_y)
+{
+    pawn->dest_y = dest_y;
+}
+
+void pawn_resolve_position(Pawn* pawn)
+{
+    if (pawn->dest_x > -1)
     {
-        pawn->is_king = true;
+        if (pawn->x == pawn->dest_x) 
+        {
+            pawn->dest_x = -1;
+            pawn->grid_x = board_x_to_grid(pawn->x);
+        }
+        else
+        {
+            pawn->x = pawn->x > pawn->dest_x
+                ? pawn->x - 1
+                : pawn->x + 1;
+        }
+    }
+
+    if (pawn->dest_y > -1)
+    {
+        if (pawn->y == pawn->dest_y && pawn->dest_y > -1) 
+        {
+            pawn->dest_y = -1;
+
+            int grid_y = board_y_to_grid(pawn->y);
+            pawn->grid_y = grid_y;
+
+            if ((pawn->direction > 0 && grid_y == 7)
+                || (pawn->direction < 0 && grid_y == 0))
+            {
+                pawn->is_king = true;
+            }
+        }
+        else
+        {
+            pawn->y = pawn->y > pawn->dest_y
+                ? pawn->y - 1
+                : pawn->y + 1;
+        }
     }
 }
 
@@ -278,7 +337,10 @@ bool pawn_is_valid_move(Grid* selected_grid, Grid* grid1)
 
 void pawn_exec()
 {
-
+    for (int i = 0; i < game_state->pawn_count; i++)
+    {
+        pawn_resolve_position(&(game_state->pawns[i]));
+    }
 }
 
 void pawn_quit()
