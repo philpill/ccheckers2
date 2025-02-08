@@ -22,14 +22,17 @@ int bot_get_grid_rating(int pawn_id, int colour, Grid current_grid, Grid dest_gr
 {
     int rating = rand() % 10;
 
-    if (!game_is_valid_move(pawn_id, dest_grid.x, dest_grid.y))
-    {
-        rating = -1;
-    }
+    bool is_valid_move = game_is_valid_move(pawn_id, dest_grid.x, dest_grid.y);
+    bool is_valid_capture = game_is_valid_capture(pawn_id, dest_grid.x, dest_grid.y);
 
-    if (game_is_valid_capture(pawn_id, dest_grid.x, dest_grid.y))
+    if (is_valid_move && is_valid_capture)
     {
         rating = rating + 5;
+    }
+
+    if (!is_valid_move)
+    {
+        rating = -1;
     }
 
     return rating;
