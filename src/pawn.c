@@ -23,8 +23,8 @@ void pawn_initialise_pawns()
         {
             game_state->pawns[id].id = id;
             game_state->pawns[id].colour = 0;
-            game_state->pawns[id].x = j;
-            game_state->pawns[id].y = i;
+            game_state->pawns[id].grid_x = j;
+            game_state->pawns[id].grid_y = i;
             game_state->pawns[id].radius = 0;
             game_state->pawns[id].direction = 1;
             game_state->pawns[id].is_king = false;
@@ -44,8 +44,8 @@ void pawn_initialise_pawns()
         {
             game_state->pawns[id].id = id;
             game_state->pawns[id].colour = 1;
-            game_state->pawns[id].x = j;
-            game_state->pawns[id].y = i;
+            game_state->pawns[id].grid_x = j;
+            game_state->pawns[id].grid_y = i;
             game_state->pawns[id].radius = 0;
             game_state->pawns[id].direction = -1;
             game_state->pawns[id].is_king = false;
@@ -65,8 +65,8 @@ void pawn_initialise_pawns_test()
 
     game_state->pawns[0].id = 0;
     game_state->pawns[0].colour = 0;
-    game_state->pawns[0].x = 0;
-    game_state->pawns[0].y = 0;
+    game_state->pawns[0].grid_x = 0;
+    game_state->pawns[0].grid_y = 0;
     game_state->pawns[0].radius = 0;
     game_state->pawns[0].direction = 1;
     game_state->pawns[0].is_king = false;
@@ -77,8 +77,8 @@ void pawn_initialise_pawns_test()
 
     game_state->pawns[1].id = 1;
     game_state->pawns[1].colour = 1;
-    game_state->pawns[1].x = 1;
-    game_state->pawns[1].y = 1;
+    game_state->pawns[1].grid_x = 1;
+    game_state->pawns[1].grid_y = 1;
     game_state->pawns[1].radius = 0;
     game_state->pawns[1].direction = -1;
     game_state->pawns[1].is_king = false;
@@ -91,8 +91,6 @@ void pawn_initialise_pawns_test()
 void pawn_init(Game* state)
 {
     game_state = state;
-
-    pawn_initialise_pawns_test();
 }
 
 void pawn_deselect_all()
@@ -106,8 +104,8 @@ void pawn_deselect_all()
 
 void pawn_get_moves(Pawn* pawn, Grid* grids)
 {
-    int grid_x = board_x_to_grid(pawn->grid_x);
-    int grid_y = board_y_to_grid(pawn->grid_y);
+    int grid_x = board_x_to_grid(pawn->x);
+    int grid_y = board_y_to_grid(pawn->y);
 
     // printf("5 grid_x: %d, grid_y: %d\n", grid_x, grid_y);
 
@@ -160,14 +158,14 @@ int pawn_mouse_click(Pawn* pawn)
 
 void pawn_mouse_hover(Pawn* pawn, int x, int y)
 {
-    double dist = abs(x - pawn->grid_x) + abs(y - pawn->grid_y);
+    double dist = abs(x - pawn->x) + abs(y - pawn->y);
 
     pawn->is_hover = dist <= pawn->radius;
 }
 
 bool pawn_mouse_hover_by_grid(Pawn* pawn, int grid_x, int grid_y)
 {
-    pawn->is_hover = pawn->x == grid_x && pawn->y == grid_y;
+    pawn->is_hover = pawn->grid_x == grid_x && pawn->grid_y == grid_y;
     return pawn->is_hover;
 }
 
@@ -188,8 +186,8 @@ bool pawn_is_at_location_grid(Grid* grid)
 {
     for (int i = 0; i < game_state->pawn_count; i++)
     {
-        if (grid->x == game_state->pawns[i].x
-            && grid->y == game_state->pawns[i].y)
+        if (grid->x == game_state->pawns[i].grid_x
+            && grid->y == game_state->pawns[i].grid_y)
         {
             return true;
         }
@@ -199,14 +197,14 @@ bool pawn_is_at_location_grid(Grid* grid)
 
 void pawn_set_x(Pawn* pawn, int x, int snapped_center_x)
 {
-    pawn->grid_x = snapped_center_x;
-    pawn->x = x;
+    pawn->x = snapped_center_x;
+    pawn->grid_x = x;
 }
 
 void pawn_set_y(Pawn* pawn, int y, int snapped_center_y)
 {
-    pawn->grid_y = snapped_center_y;
-    pawn->y = y;
+    pawn->y = snapped_center_y;
+    pawn->grid_y = y;
 
     if ((pawn->direction > 0 && y == 7)
         || (pawn->direction < 0 && y == 0))
@@ -219,8 +217,8 @@ bool pawn_is_opposition(int colour, Grid* grid)
 {
     for (int i = 0; i < game_state->pawn_count; i++)
     {
-        if (grid->x == game_state->pawns[i].x
-            && grid->y == game_state->pawns[i].y
+        if (grid->x == game_state->pawns[i].grid_x
+            && grid->y == game_state->pawns[i].grid_y
             && colour != game_state->pawns[i].colour)
         {
             return true;
@@ -232,14 +230,14 @@ bool pawn_is_opposition(int colour, Grid* grid)
 
 void pawn_capture_move(Pawn* pawn, Grid* grid)
 {
-    int capture_x = grid->x > pawn->x ? pawn->x + 1 : pawn->x - 1;
-    int capture_y = grid->y > pawn->y ? pawn->y + 1 : pawn->y - 1;
+    int capture_x = grid->x > pawn->grid_x ? pawn->grid_x + 1 : pawn->grid_x - 1;
+    int capture_y = grid->y > pawn->grid_y ? pawn->grid_y + 1 : pawn->grid_y - 1;
 
     for (int i = 0; i < game_state->pawn_count; i++)
     {
         if (game_state->pawns[i].is_active
-            && capture_x == game_state->pawns[i].x
-            && capture_y == game_state->pawns[i].y)
+            && capture_x == game_state->pawns[i].grid_x
+            && capture_y == game_state->pawns[i].grid_y)
         {
             pawn_capture(&(game_state->pawns[i]));
             return;
@@ -250,10 +248,12 @@ void pawn_capture_move(Pawn* pawn, Grid* grid)
 void pawn_capture(Pawn* pawn)
 {
     pawn->is_active = false;
-    pawn->x = -1;
-    pawn->y = -1;
     pawn->grid_x = -1;
     pawn->grid_y = -1;
+    pawn->x = -1;
+    pawn->y = -1;
+    pawn->dest_x = -1;
+    pawn->dest_y = -1;
 }
 
 bool pawn_is_capture_available(int pawn_colour, Grid* grid1, Grid* grid2)

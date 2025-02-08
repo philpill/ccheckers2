@@ -69,8 +69,8 @@ void render_piece(Pawn* pawn)
     }
 
     int error = pawn->colour == 0
-        ? SDL_RenderFillCircle(renderer, pawn->grid_x, pawn->grid_y, pawn->radius)
-        : SDL_RenderDrawCircle(renderer, pawn->grid_x, pawn->grid_y, pawn->radius);
+        ? SDL_RenderFillCircle(renderer, pawn->x, pawn->y, pawn->radius)
+        : SDL_RenderDrawCircle(renderer, pawn->x, pawn->y, pawn->radius);
     if (error < 0)
     {
         printf("error: %s\n", SDL_GetError());
@@ -98,26 +98,26 @@ void render_piece(Pawn* pawn)
 
         Grid grid1 =
         {
-            (pawn->radius * sin(a) + pawn->grid_x),
-            (pawn->radius * cos(a) + pawn->grid_y)
+            (pawn->radius * sin(a) + pawn->x),
+            (pawn->radius * cos(a) + pawn->y)
         };
 
         Grid grid2 =
         {
-            (pawn->radius * sin(b) + pawn->grid_x),
-            (pawn->radius * cos(b) + pawn->grid_y)
+            (pawn->radius * sin(b) + pawn->x),
+            (pawn->radius * cos(b) + pawn->y)
         };
 
         Grid grid3 =
         {
-            (pawn->radius * sin(c) + pawn->grid_x),
-            (pawn->radius * cos(c) + pawn->grid_y)
+            (pawn->radius * sin(c) + pawn->x),
+            (pawn->radius * cos(c) + pawn->y)
         };
 
         Grid grid4 =
         {
-            (pawn->radius * sin(d) + pawn->grid_x),
-            (pawn->radius * cos(d) + pawn->grid_y)
+            (pawn->radius * sin(d) + pawn->x),
+            (pawn->radius * cos(d) + pawn->y)
         };
 
         if (SDL_RenderDrawLine(renderer,
@@ -368,16 +368,16 @@ void render_update_grid_x(Pawn* pawn)
 {
     int radius = (game_state->grid_size / 2) - 6; //10
     pawn->radius = radius;
-    int grid_x = (pawn->x * game_state->grid_size) + game_state->board_offset_x;
-    pawn->grid_x = board_get_snapped_center_x(grid_x);
+    int grid_x = (pawn->grid_x * game_state->grid_size) + game_state->board_offset_x;
+    pawn->x = board_get_snapped_center_x(grid_x);
 }
 
 void render_update_grid_y(Pawn* pawn)
 {
     int radius = (game_state->grid_size / 2) - 6; //10
     pawn->radius = radius;
-    int grid_y = (pawn->y * game_state->grid_size) + game_state->board_offset_y;
-    pawn->grid_y = board_get_snapped_center_y(grid_y);
+    int grid_y = (pawn->grid_y * game_state->grid_size) + game_state->board_offset_y;
+    pawn->y = board_get_snapped_center_y(grid_y);
 }
 
 void render_init_pieces()

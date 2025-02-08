@@ -9,6 +9,8 @@ typedef struct {
     int colour;
     int x;
     int y;
+    int dest_x;
+    int dest_y;
     int grid_x;
     int grid_y;
     int radius;

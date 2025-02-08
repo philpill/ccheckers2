@@ -68,7 +68,7 @@ void populate_ratings(Pawn* pawn, int count)
 
         pawn_get_moves(pawn, grids);
 
-        Grid current_grid = { pawn->x, pawn->y };
+        Grid current_grid = { pawn->grid_x, pawn->grid_y };
         int id = pawn->id;
         for (int i = 0; i < 8; i++)
         {

@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include "game.h"
 #include "input.h"
-#include "pawn.h"
 
 void input_exec(Game* state)
 {
