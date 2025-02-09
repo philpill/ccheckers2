@@ -3,12 +3,13 @@
 
 #include <stdbool.h>
 #include <sdl.h>
+#include <stdio.h>
 
 typedef struct {
     int id;
     int colour;
-    int x;
-    int y;
+    float x;
+    float y;
     int dest_x;
     int dest_y;
     int grid_x;
@@ -59,6 +60,7 @@ typedef struct {
     int pawn_count;
     int selected_option_index;
     int stage;
+    float animation_speed;
     bool is_quit;
     bool is_player1_bot;
     bool is_player2_bot;
@@ -67,6 +69,7 @@ typedef struct {
     Tile* movement_tiles;
     Tile* cursor_tile;
     Tile* active_tile;
+    Uint64 step;
 } Game;
 
 typedef struct {

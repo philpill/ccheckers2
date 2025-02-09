@@ -15,8 +15,6 @@ static double interval = 0.0;
 
 void loop(Game *state)
 {
-    // printf(".");
-
     Uint64 start = SDL_GetTicks64();
 
     input_exec(state);
@@ -25,11 +23,15 @@ void loop(Game *state)
     board_exec(state);
     pawn_exec(state);
 
-    Uint64 elapsed = SDL_GetTicks64() - start;
+    Uint64 current = SDL_GetTicks64();
 
-    Uint32 delay = elapsed > interval
-        ? clamp_uint32(interval - elapsed, 0, interval)
+    Uint64 step = current - start;
+
+    Uint32 delay = step > interval
+        ? clamp_uint32(interval - step, 0, interval)
         : 0;
+
+    state->step = step;
 
     SDL_Delay(delay);
 }

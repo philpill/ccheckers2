@@ -7,7 +7,7 @@
 
 static Game* game_state;
 
-static MaxRating ratings[192]; // all pawns (24) * possible moves (8)
+static MaxRating ratings[200]; // all pawns (24) * possible moves (8)
 
 static Grid grids[8];
 
@@ -49,7 +49,7 @@ void bot_clear_grids()
 
 void bot_clear_grid_ratings()
 {
-    for (int i = 0;i < 200; i++)
+    for (int i = 0; i < 200; i++)
     {
         ratings[i].rating = -1;
     }

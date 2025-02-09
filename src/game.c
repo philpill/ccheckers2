@@ -18,8 +18,9 @@ void game_init()
     game_state.board_offset_y = 10;
     game_state.current_colour = 0;
     game_state.selected_pawn_id = -1;
-    game_state.pawn_count = 24;
+    game_state.pawn_count = 0;
     game_state.stage = 0;
+    game_state.animation_speed = 0.15;
     game_state.is_player1_bot = false;
     game_state.is_player2_bot = true;
     game_state.is_quit = false;

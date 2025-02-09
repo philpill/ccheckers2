@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "game.h"
 #include "pawn.h"
 #include "board.h"
@@ -242,9 +243,25 @@ void pawn_resolve_position(Pawn* pawn)
         }
         else
         {
+
+            // s = d/t
+
+            float distance = game_state->animation_speed * game_state->step;
+
+            printf("----- -----\n");
+            printf("pawn %d\n", pawn->id);
+            printf("distance %f\n", distance);
+            printf("animation_speed %f\n", game_state->animation_speed);
+            printf("step %I64d\n", game_state->step);
+            printf("----- -----\n");
+
             pawn->x = pawn->x > pawn->dest_x
-                ? pawn->x - 1
-                : pawn->x + 1;
+                ? pawn->x - distance
+                : pawn->x + distance;
+
+            pawn->x = pawn->x*10.0f;
+            pawn->x = (pawn->x > (floor(pawn->x)+0.5f)) ? ceil(pawn->x) : floor(pawn->x);
+            pawn->x = pawn->x/10.0f;
         }
     }
 
@@ -265,9 +282,25 @@ void pawn_resolve_position(Pawn* pawn)
         }
         else
         {
+            // s = d/t
+
+            float distance = game_state->animation_speed * game_state->step;
+
+            printf("----- -----\n");
+            printf("pawn %d\n", pawn->id);
+            printf("distance %f\n", distance);
+            printf("animation_speed %f\n", game_state->animation_speed);
+            printf("step %I64d\n", game_state->step);
+            printf("----- -----\n");
+
+
             pawn->y = pawn->y > pawn->dest_y
-                ? pawn->y - 1
-                : pawn->y + 1;
+                ? pawn->y - distance
+                : pawn->y + distance;
+
+            pawn->y = pawn->y*10.0f;
+            pawn->y = (pawn->y > (floor(pawn->y)+0.5f)) ? ceil(pawn->y) : floor(pawn->y);
+            pawn->y = pawn->y/10.0f;
         }
     }
 }
