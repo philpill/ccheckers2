@@ -236,38 +236,26 @@ void pawn_resolve_position(Pawn* pawn)
 {
     if (pawn->dest_x > -1)
     {
-        if (pawn->x == pawn->dest_x) 
+        if (pawn->x == pawn->dest_x)
         {
             pawn->dest_x = -1;
             pawn->grid_x = board_x_to_grid(pawn->x);
         }
         else
         {
-
-            // s = d/t
-
             float distance = game_state->animation_speed * game_state->step;
-
-            printf("----- -----\n");
-            printf("pawn %d\n", pawn->id);
-            printf("distance %f\n", distance);
-            printf("animation_speed %f\n", game_state->animation_speed);
-            printf("step %I64d\n", game_state->step);
-            printf("----- -----\n");
 
             pawn->x = pawn->x > pawn->dest_x
                 ? pawn->x - distance
                 : pawn->x + distance;
 
-            pawn->x = pawn->x*10.0f;
-            pawn->x = (pawn->x > (floor(pawn->x)+0.5f)) ? ceil(pawn->x) : floor(pawn->x);
-            pawn->x = pawn->x/10.0f;
+            pawn->x = round_float(pawn->x);
         }
     }
 
     if (pawn->dest_y > -1)
     {
-        if (pawn->y == pawn->dest_y && pawn->dest_y > -1) 
+        if (pawn->y == pawn->dest_y && pawn->dest_y > -1)
         {
             pawn->dest_y = -1;
 
@@ -282,25 +270,13 @@ void pawn_resolve_position(Pawn* pawn)
         }
         else
         {
-            // s = d/t
-
             float distance = game_state->animation_speed * game_state->step;
-
-            printf("----- -----\n");
-            printf("pawn %d\n", pawn->id);
-            printf("distance %f\n", distance);
-            printf("animation_speed %f\n", game_state->animation_speed);
-            printf("step %I64d\n", game_state->step);
-            printf("----- -----\n");
-
 
             pawn->y = pawn->y > pawn->dest_y
                 ? pawn->y - distance
                 : pawn->y + distance;
 
-            pawn->y = pawn->y*10.0f;
-            pawn->y = (pawn->y > (floor(pawn->y)+0.5f)) ? ceil(pawn->y) : floor(pawn->y);
-            pawn->y = pawn->y/10.0f;
+            pawn->y = round_float(pawn->y);
         }
     }
 }
@@ -370,10 +346,16 @@ bool pawn_is_valid_move(Grid* selected_grid, Grid* grid1)
 
 void pawn_exec()
 {
+    bool is_animating = false;
     for (int i = 0; i < game_state->pawn_count; i++)
     {
         pawn_resolve_position(&(game_state->pawns[i]));
+        is_animating = is_animating
+            &&
+            (game_state->pawns[i].x != game_state->pawns[i].dest_x
+                || game_state->pawns[i].y != game_state->pawns[i].dest_y);
     }
+    game_state->is_animating = is_animating;
 }
 
 void pawn_quit()

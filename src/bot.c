@@ -97,6 +97,8 @@ void bot_end_turn()
 
 void bot_exec()
 {
+    if (game_state->is_animating) { return; }
+
     int now = time(NULL);
 
     if (seconds_1 < 0) {

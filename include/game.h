@@ -64,6 +64,7 @@ typedef struct {
     bool is_quit;
     bool is_player1_bot;
     bool is_player2_bot;
+    bool is_animating;
     Option* options;
     Pawn* pawns;
     Tile* movement_tiles;
