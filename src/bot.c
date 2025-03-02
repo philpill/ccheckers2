@@ -185,8 +185,6 @@ void bot_exec()
             pawn_set_dest_y(pawn, snapped_center_y);
         }
 
-        // printf("bot pawn: %d, x: %d y: %d\n", pawn->id, grid_x, grid_y);
-
         bot_end_turn();
     }
 }

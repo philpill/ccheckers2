@@ -24,13 +24,13 @@ void game_init()
     game_state.is_player1_bot = false;
     game_state.is_player2_bot = true;
     game_state.is_quit = false;
-    game_state.pawns = malloc(24 * sizeof(Pawn));
+    game_state.pawns = calloc(24, sizeof(Pawn));
 
-    game_state.movement_tiles = malloc(8 * sizeof(Tile));
-    game_state.active_tile = malloc(sizeof(Tile));
-    game_state.cursor_tile = malloc(sizeof(Tile));
+    game_state.movement_tiles = calloc(8, sizeof(Tile));
+    game_state.active_tile = calloc(1, sizeof(Tile));
+    game_state.cursor_tile = calloc(1, sizeof(Tile));
 
-    game_state.options = malloc(options_count * sizeof(Option));
+    game_state.options = calloc(options_count, sizeof(Option));
     for (int i = 0; i < options_count; i++)
     {
         game_state.options[i].id = i;
@@ -41,7 +41,7 @@ void game_init()
         game_state.options[i].x2 = 0;
         game_state.options[i].y1 = 0;
         game_state.options[i].y2 = 0;
-        game_state.options[i].text = malloc(80 * sizeof(char));
+        game_state.options[i].text = calloc(80, sizeof(char));
     }
     game_state.selected_option_index = -1;
 
@@ -386,6 +386,10 @@ void game_board_click(int x, int y)
             if (is_valid_capture)
             {
                 pawn_capture_move(pawn, &selected_grid);
+
+
+                // check for double jump
+
             }
 
             int snapped_center_x = board_get_snapped_center_x(x);
@@ -393,6 +397,11 @@ void game_board_click(int x, int y)
 
             pawn_set_dest_x(pawn, snapped_center_x);
             pawn_set_dest_y(pawn, snapped_center_y);
+
+
+
+
+            // check for double jump
 
             // switch active player
             game_state.current_colour = game_state.current_colour == 0 ? 1 : 0;

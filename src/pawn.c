@@ -4,6 +4,7 @@
 #include "game.h"
 #include "pawn.h"
 #include "board.h"
+#include "utils.h"
 
 static Game* game_state;
 
@@ -81,7 +82,6 @@ void pawn_initialise_pawns_test()
     game_state->pawns[0].is_selected = false;
     game_state->pawns[0].is_active = true;
 
-
     game_state->pawns[1].id = 1;
     game_state->pawns[1].colour = 1;
     game_state->pawns[1].dest_x = -1;
@@ -94,7 +94,6 @@ void pawn_initialise_pawns_test()
     game_state->pawns[1].is_hover = false;
     game_state->pawns[1].is_selected = false;
     game_state->pawns[1].is_active = true;
-
 }
 
 void pawn_init(Game* state)

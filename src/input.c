@@ -28,7 +28,6 @@ void input_exec(Game* state)
             case SDL_MOUSEBUTTONDOWN:
             // case SDL_MOUSEBUTTONUP:
                 mouse_state = SDL_GetMouseState(&x, &y);
-                // printf("x: %d, y: %d, mouse: %d\n", x, y, mouse_state);
                 game_mouse_event(x, y, mouse_state);
                 break;
             case SDL_QUIT:
